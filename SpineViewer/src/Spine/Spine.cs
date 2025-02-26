@@ -73,7 +73,7 @@ namespace SpineViewer.Spine
                     ImplementationTypes[attr.Version] = type;
                 }
             }
-            Program.Logger.Debug($"Find Spine implementations: [{string.Join(", ", ImplementationTypes.Keys)}]");
+            Program.Logger.Debug("Find Spine implementations: [{}]", string.Join(", ", ImplementationTypes.Keys));
 
             // 加载 FragmentShader
             try

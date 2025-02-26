@@ -42,20 +42,20 @@ namespace SpineViewer
                 index = spines.Count;
 
             var dialog = new OpenSpineDialog();
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if (dialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            try
             {
-                try
-                {
-                    var spine = Spine.Spine.New(dialog.Version, dialog.SkelPath, dialog.AtlasPath);
-                    spines.Insert(index, spine);
-                    listView.Items.Insert(index, new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath });
-                }
-                catch (Exception ex)
-                {
-                    Program.Logger.Error(ex.ToString());
-                    Program.Logger.Error($"Failed to load {dialog.SkelPath} {dialog.AtlasPath}");
-                    MessageBox.Show(ex.ToString(), "骨骼加载失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                var spine = Spine.Spine.New(dialog.Version, dialog.SkelPath, dialog.AtlasPath);
+                spines.Insert(index, spine);
+                listView.Items.Insert(index, new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath });
+            }
+            catch (Exception ex)
+            {
+                Program.Logger.Error(ex.ToString());
+                Program.Logger.Error("Failed to load {} {}", dialog.SkelPath, dialog.AtlasPath);
+                MessageBox.Show(ex.ToString(), "骨骼加载失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -72,7 +72,41 @@ namespace SpineViewer
         /// </summary>
         public void BatchAdd()
         {
-            throw new NotImplementedException();
+            var dialog = new BatchOpenSpineDialog();
+            if (dialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            int totalCount = dialog.SkelPaths.Length;
+            int errorCount = 0;
+
+            var version = dialog.Version;
+            for (int i = 0;  i < totalCount; i++) 
+            {
+                var skelPath = dialog.SkelPaths[i];
+                Program.Logger.Info("[{}/{}] loading {}", i + 1, totalCount, skelPath);
+                try
+                {
+                    var spine = Spine.Spine.New(version, skelPath);
+                    spines.Add(spine);
+                    listView.Items.Add(new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath });
+                }
+                catch (Exception ex)
+                {
+                    Program.Logger.Error(ex.ToString());
+                    Program.Logger.Error("Failed to load {}", skelPath);
+                    errorCount++;
+                }
+            }
+
+            if (errorCount > 0)
+            {
+                Program.Logger.Warn("Batch load {} successfully, {} failed", totalCount - errorCount, errorCount);
+                MessageBox.Show($"{totalCount - errorCount}成功，{errorCount}失败", "部分骨骼加载失败", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else
+            {
+                Program.Logger.Info("{} skel loaded successfully", totalCount);
+            }
         }
 
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
