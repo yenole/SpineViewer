@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using System.Collections.ObjectModel;
 using SpineViewer.Spine;
 using System.Reflection;
-using SpineViewer.src;
 
 namespace SpineViewer
 {
