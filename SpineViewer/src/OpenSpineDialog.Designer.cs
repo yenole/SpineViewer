@@ -239,7 +239,7 @@
             openFileDialog_Atlas.AddToRecent = false;
             openFileDialog_Atlas.Filter = "atlas 文件 (*.atlas)|*.atlas";
             // 
-            // SkelSelectDialog
+            // OpenSpineDialog
             // 
             AcceptButton = button_Ok;
             AutoScaleDimensions = new SizeF(11F, 24F);
@@ -250,7 +250,7 @@
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
-            Name = "SkelSelectDialog";
+            Name = "OpenSpineDialog";
             ShowIcon = false;
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterScreen;
