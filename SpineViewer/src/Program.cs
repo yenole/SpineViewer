@@ -18,7 +18,16 @@ namespace SpineViewer
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new MainForm());
+
+            try
+            {
+                Application.Run(new MainForm());
+            }
+            catch (Exception ex)
+            {
+                Logger.Fatal(ex.ToString());
+                MessageBox.Show(ex.ToString(), "≥Ã–Ú“—±¿¿£", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            }
         }
 
         /// <summary>

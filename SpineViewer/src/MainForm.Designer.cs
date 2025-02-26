@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            ListViewItem listViewItem1 = new ListViewItem(new string[] { "A Loooooooooog Name1", "A Loooooooooog Version" }, -1);
             menuStrip = new MenuStrip();
             toolStripMenuItem_File = new ToolStripMenuItem();
             toolStripMenuItem_Open = new ToolStripMenuItem();
@@ -45,16 +44,7 @@
             splitContainer_Functional = new SplitContainer();
             splitContainer_Information = new SplitContainer();
             groupBox_SkelList = new GroupBox();
-            tableLayoutPanel = new TableLayoutPanel();
-            flowLayoutPanel_Buttons = new FlowLayoutPanel();
-            button_Add = new Button();
-            button_Insert = new Button();
-            button_Remove = new Button();
-            button_MoveUp = new Button();
-            button_MoveDown = new Button();
-            listView_SkelList = new ListView();
-            columnHeader_Name = new ColumnHeader();
-            columnHeader_Version = new ColumnHeader();
+            listViewSkel = new ListViewSkel();
             splitContainer_Config = new SplitContainer();
             groupBox_SkelConfig = new GroupBox();
             propertyGrid_Skel = new PropertyGrid();
@@ -80,8 +70,6 @@
             splitContainer_Information.Panel2.SuspendLayout();
             splitContainer_Information.SuspendLayout();
             groupBox_SkelList.SuspendLayout();
-            tableLayoutPanel.SuspendLayout();
-            flowLayoutPanel_Buttons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer_Config).BeginInit();
             splitContainer_Config.Panel1.SuspendLayout();
             splitContainer_Config.Panel2.SuspendLayout();
@@ -251,7 +239,7 @@
             // 
             // groupBox_SkelList
             // 
-            groupBox_SkelList.Controls.Add(tableLayoutPanel);
+            groupBox_SkelList.Controls.Add(listViewSkel);
             groupBox_SkelList.Dock = DockStyle.Fill;
             groupBox_SkelList.Location = new Point(0, 0);
             groupBox_SkelList.Name = "groupBox_SkelList";
@@ -260,126 +248,14 @@
             groupBox_SkelList.TabStop = false;
             groupBox_SkelList.Text = "模型列表";
             // 
-            // tableLayoutPanel
+            // listViewSkel
             // 
-            tableLayoutPanel.ColumnCount = 1;
-            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tableLayoutPanel.Controls.Add(flowLayoutPanel_Buttons, 0, 0);
-            tableLayoutPanel.Controls.Add(listView_SkelList, 0, 1);
-            tableLayoutPanel.Dock = DockStyle.Fill;
-            tableLayoutPanel.Location = new Point(3, 26);
-            tableLayoutPanel.Name = "tableLayoutPanel";
-            tableLayoutPanel.RowCount = 2;
-            tableLayoutPanel.RowStyles.Add(new RowStyle());
-            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel.Size = new Size(330, 703);
-            tableLayoutPanel.TabIndex = 1;
-            // 
-            // flowLayoutPanel_Buttons
-            // 
-            flowLayoutPanel_Buttons.AutoSize = true;
-            flowLayoutPanel_Buttons.Controls.Add(button_Add);
-            flowLayoutPanel_Buttons.Controls.Add(button_Insert);
-            flowLayoutPanel_Buttons.Controls.Add(button_Remove);
-            flowLayoutPanel_Buttons.Controls.Add(button_MoveUp);
-            flowLayoutPanel_Buttons.Controls.Add(button_MoveDown);
-            flowLayoutPanel_Buttons.Dock = DockStyle.Fill;
-            flowLayoutPanel_Buttons.Location = new Point(3, 3);
-            flowLayoutPanel_Buttons.Name = "flowLayoutPanel_Buttons";
-            flowLayoutPanel_Buttons.Size = new Size(324, 40);
-            flowLayoutPanel_Buttons.TabIndex = 4;
-            // 
-            // button_Add
-            // 
-            button_Add.Anchor = AnchorStyles.None;
-            button_Add.AutoSize = true;
-            button_Add.Location = new Point(3, 3);
-            button_Add.Name = "button_Add";
-            button_Add.Size = new Size(56, 34);
-            button_Add.TabIndex = 0;
-            button_Add.Text = "添加";
-            button_Add.UseVisualStyleBackColor = true;
-            button_Add.Click += toolStripMenuItem_Open_Click;
-            // 
-            // button_Insert
-            // 
-            button_Insert.Anchor = AnchorStyles.None;
-            button_Insert.AutoSize = true;
-            button_Insert.Enabled = false;
-            button_Insert.Location = new Point(65, 3);
-            button_Insert.Name = "button_Insert";
-            button_Insert.Size = new Size(56, 34);
-            button_Insert.TabIndex = 4;
-            button_Insert.Text = "插入";
-            button_Insert.UseVisualStyleBackColor = true;
-            button_Insert.Click += button_Insert_Click;
-            // 
-            // button_Remove
-            // 
-            button_Remove.Anchor = AnchorStyles.None;
-            button_Remove.AutoSize = true;
-            button_Remove.Enabled = false;
-            button_Remove.Location = new Point(127, 3);
-            button_Remove.Name = "button_Remove";
-            button_Remove.Size = new Size(56, 34);
-            button_Remove.TabIndex = 1;
-            button_Remove.Text = "移除";
-            button_Remove.UseVisualStyleBackColor = true;
-            button_Remove.Click += button_Remove_Click;
-            // 
-            // button_MoveUp
-            // 
-            button_MoveUp.Anchor = AnchorStyles.None;
-            button_MoveUp.AutoSize = true;
-            button_MoveUp.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            button_MoveUp.Enabled = false;
-            button_MoveUp.Location = new Point(189, 3);
-            button_MoveUp.Name = "button_MoveUp";
-            button_MoveUp.Size = new Size(56, 34);
-            button_MoveUp.TabIndex = 2;
-            button_MoveUp.Text = "上移";
-            button_MoveUp.UseVisualStyleBackColor = true;
-            button_MoveUp.Click += button_MoveUp_Click;
-            // 
-            // button_MoveDown
-            // 
-            button_MoveDown.Anchor = AnchorStyles.None;
-            button_MoveDown.AutoSize = true;
-            button_MoveDown.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            button_MoveDown.Enabled = false;
-            button_MoveDown.Location = new Point(251, 3);
-            button_MoveDown.Name = "button_MoveDown";
-            button_MoveDown.Size = new Size(56, 34);
-            button_MoveDown.TabIndex = 3;
-            button_MoveDown.Text = "下移";
-            button_MoveDown.UseVisualStyleBackColor = true;
-            button_MoveDown.Click += button_MoveDown_Click;
-            // 
-            // listView_SkelList
-            // 
-            listView_SkelList.Columns.AddRange(new ColumnHeader[] { columnHeader_Name, columnHeader_Version });
-            listView_SkelList.Dock = DockStyle.Fill;
-            listView_SkelList.FullRowSelect = true;
-            listView_SkelList.GridLines = true;
-            listView_SkelList.Items.AddRange(new ListViewItem[] { listViewItem1 });
-            listView_SkelList.Location = new Point(3, 49);
-            listView_SkelList.Name = "listView_SkelList";
-            listView_SkelList.ShowItemToolTips = true;
-            listView_SkelList.Size = new Size(324, 651);
-            listView_SkelList.TabIndex = 1;
-            listView_SkelList.UseCompatibleStateImageBehavior = false;
-            listView_SkelList.View = View.Details;
-            listView_SkelList.SelectedIndexChanged += listView_SkelList_SelectedIndexChanged;
-            // 
-            // columnHeader_Name
-            // 
-            columnHeader_Name.Text = "名称";
-            columnHeader_Name.Width = 150;
-            // 
-            // columnHeader_Version
-            // 
-            columnHeader_Version.Text = "版本";
-            columnHeader_Version.Width = 150;
+            listViewSkel.Dock = DockStyle.Fill;
+            listViewSkel.Location = new Point(3, 26);
+            listViewSkel.Name = "listViewSkel";
+            listViewSkel.PropertyGrid = propertyGrid_Skel;
+            listViewSkel.Size = new Size(330, 703);
+            listViewSkel.TabIndex = 0;
             // 
             // splitContainer_Config
             // 
@@ -514,10 +390,6 @@
             ((System.ComponentModel.ISupportInitialize)splitContainer_Information).EndInit();
             splitContainer_Information.ResumeLayout(false);
             groupBox_SkelList.ResumeLayout(false);
-            tableLayoutPanel.ResumeLayout(false);
-            tableLayoutPanel.PerformLayout();
-            flowLayoutPanel_Buttons.ResumeLayout(false);
-            flowLayoutPanel_Buttons.PerformLayout();
             splitContainer_Config.Panel1.ResumeLayout(false);
             splitContainer_Config.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer_Config).EndInit();
@@ -551,16 +423,6 @@
         private ToolStripMenuItem toolStripMenuItem_Help;
         private ToolStripMenuItem toolStripMenuItem_About;
         private ToolStripMenuItem toolStripMenuItem_BatchOpen;
-        private TableLayoutPanel tableLayoutPanel;
-        private FlowLayoutPanel flowLayoutPanel_Buttons;
-        private Button button_Add;
-        private Button button_Insert;
-        private Button button_Remove;
-        private Button button_MoveUp;
-        private Button button_MoveDown;
-        private ListView listView_SkelList;
-        private ColumnHeader columnHeader_Name;
-        private ColumnHeader columnHeader_Version;
         private GroupBox groupBox_Preview;
         private Panel panel_Preview;
         private Panel panel_PreviewContainer;
@@ -568,5 +430,6 @@
         private OpenFileDialog openFileDialog_Atlas;
         private ToolTip toolTip1;
         private PropertyGrid propertyGrid_Skel;
+        private ListViewSkel listViewSkel;
     }
 }

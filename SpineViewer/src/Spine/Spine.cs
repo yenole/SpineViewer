@@ -136,7 +136,7 @@ namespace SpineViewer.Spine
         /// 获取所属版本
         /// </summary>
         [TypeConverter(typeof(VersionTypeConverter))]
-        [Browsable(true), Category("基本信息"), DisplayName("运行时版本")]
+        [Browsable(true), Category("基本信息"), DisplayName("版本")]
         public Version Version { get; }
 
         /// <summary>
