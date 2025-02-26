@@ -28,16 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SpineListView));
             tableLayoutPanel = new TableLayoutPanel();
             flowLayoutPanel_Buttons = new FlowLayoutPanel();
             button_Add = new Button();
-            button_Insert = new Button();
             button_Remove = new Button();
             button_MoveUp = new Button();
             button_MoveDown = new Button();
+            button_Insert = new Button();
+            button_RemoveAll = new Button();
             listView = new ListView();
             columnHeader_Name = new ColumnHeader();
             columnHeader_Version = new ColumnHeader();
+            toolTip = new ToolTip(components);
             tableLayoutPanel.SuspendLayout();
             flowLayoutPanel_Buttons.SuspendLayout();
             SuspendLayout();
@@ -62,10 +66,11 @@
             // 
             flowLayoutPanel_Buttons.AutoSize = true;
             flowLayoutPanel_Buttons.Controls.Add(button_Add);
-            flowLayoutPanel_Buttons.Controls.Add(button_Insert);
             flowLayoutPanel_Buttons.Controls.Add(button_Remove);
             flowLayoutPanel_Buttons.Controls.Add(button_MoveUp);
             flowLayoutPanel_Buttons.Controls.Add(button_MoveDown);
+            flowLayoutPanel_Buttons.Controls.Add(button_Insert);
+            flowLayoutPanel_Buttons.Controls.Add(button_RemoveAll);
             flowLayoutPanel_Buttons.Dock = DockStyle.Fill;
             flowLayoutPanel_Buttons.Location = new Point(3, 3);
             flowLayoutPanel_Buttons.Name = "flowLayoutPanel_Buttons";
@@ -76,37 +81,28 @@
             // 
             button_Add.Anchor = AnchorStyles.None;
             button_Add.AutoSize = true;
+            button_Add.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            button_Add.Image = (Image)resources.GetObject("button_Add.Image");
             button_Add.Location = new Point(3, 3);
             button_Add.Name = "button_Add";
-            button_Add.Size = new Size(56, 34);
+            button_Add.Size = new Size(34, 34);
             button_Add.TabIndex = 0;
-            button_Add.Text = "添加";
+            toolTip.SetToolTip(button_Add, "在末尾添加项");
             button_Add.UseVisualStyleBackColor = true;
             button_Add.Click += button_Add_Click;
-            // 
-            // button_Insert
-            // 
-            button_Insert.Anchor = AnchorStyles.None;
-            button_Insert.AutoSize = true;
-            button_Insert.Enabled = false;
-            button_Insert.Location = new Point(65, 3);
-            button_Insert.Name = "button_Insert";
-            button_Insert.Size = new Size(56, 34);
-            button_Insert.TabIndex = 4;
-            button_Insert.Text = "插入";
-            button_Insert.UseVisualStyleBackColor = true;
-            button_Insert.Click += button_Insert_Click;
             // 
             // button_Remove
             // 
             button_Remove.Anchor = AnchorStyles.None;
             button_Remove.AutoSize = true;
+            button_Remove.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             button_Remove.Enabled = false;
-            button_Remove.Location = new Point(127, 3);
+            button_Remove.Image = (Image)resources.GetObject("button_Remove.Image");
+            button_Remove.Location = new Point(43, 3);
             button_Remove.Name = "button_Remove";
-            button_Remove.Size = new Size(56, 34);
+            button_Remove.Size = new Size(34, 34);
             button_Remove.TabIndex = 1;
-            button_Remove.Text = "移除";
+            toolTip.SetToolTip(button_Remove, "移除选中项");
             button_Remove.UseVisualStyleBackColor = true;
             button_Remove.Click += button_Remove_Click;
             // 
@@ -116,11 +112,12 @@
             button_MoveUp.AutoSize = true;
             button_MoveUp.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             button_MoveUp.Enabled = false;
-            button_MoveUp.Location = new Point(189, 3);
+            button_MoveUp.Image = (Image)resources.GetObject("button_MoveUp.Image");
+            button_MoveUp.Location = new Point(83, 3);
             button_MoveUp.Name = "button_MoveUp";
-            button_MoveUp.Size = new Size(56, 34);
+            button_MoveUp.Size = new Size(34, 34);
             button_MoveUp.TabIndex = 2;
-            button_MoveUp.Text = "上移";
+            toolTip.SetToolTip(button_MoveUp, "上移选中项");
             button_MoveUp.UseVisualStyleBackColor = true;
             button_MoveUp.Click += button_MoveUp_Click;
             // 
@@ -130,16 +127,47 @@
             button_MoveDown.AutoSize = true;
             button_MoveDown.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             button_MoveDown.Enabled = false;
-            button_MoveDown.Location = new Point(251, 3);
+            button_MoveDown.Image = (Image)resources.GetObject("button_MoveDown.Image");
+            button_MoveDown.Location = new Point(123, 3);
             button_MoveDown.Name = "button_MoveDown";
-            button_MoveDown.Size = new Size(56, 34);
+            button_MoveDown.Size = new Size(34, 34);
             button_MoveDown.TabIndex = 3;
-            button_MoveDown.Text = "下移";
+            toolTip.SetToolTip(button_MoveDown, "下移选中项");
             button_MoveDown.UseVisualStyleBackColor = true;
             button_MoveDown.Click += button_MoveDown_Click;
             // 
+            // button_Insert
+            // 
+            button_Insert.Anchor = AnchorStyles.None;
+            button_Insert.AutoSize = true;
+            button_Insert.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            button_Insert.Enabled = false;
+            button_Insert.Image = (Image)resources.GetObject("button_Insert.Image");
+            button_Insert.Location = new Point(163, 3);
+            button_Insert.Name = "button_Insert";
+            button_Insert.Size = new Size(34, 34);
+            button_Insert.TabIndex = 4;
+            toolTip.SetToolTip(button_Insert, "在选中项之前插入项");
+            button_Insert.UseVisualStyleBackColor = true;
+            button_Insert.Click += button_Insert_Click;
+            // 
+            // button_RemoveAll
+            // 
+            button_RemoveAll.Anchor = AnchorStyles.None;
+            button_RemoveAll.AutoSize = true;
+            button_RemoveAll.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            button_RemoveAll.Image = (Image)resources.GetObject("button_RemoveAll.Image");
+            button_RemoveAll.Location = new Point(203, 3);
+            button_RemoveAll.Name = "button_RemoveAll";
+            button_RemoveAll.Size = new Size(34, 34);
+            button_RemoveAll.TabIndex = 5;
+            toolTip.SetToolTip(button_RemoveAll, "移除所有项");
+            button_RemoveAll.UseVisualStyleBackColor = true;
+            button_RemoveAll.Click += button_RemoveAll_Click;
+            // 
             // listView
             // 
+            listView.AllowDrop = true;
             listView.Columns.AddRange(new ColumnHeader[] { columnHeader_Name, columnHeader_Version });
             listView.Dock = DockStyle.Fill;
             listView.FullRowSelect = true;
@@ -151,7 +179,11 @@
             listView.TabIndex = 1;
             listView.UseCompatibleStateImageBehavior = false;
             listView.View = View.Details;
+            listView.ItemDrag += listView_ItemDrag;
             listView.SelectedIndexChanged += listView_SelectedIndexChanged;
+            listView.DragDrop += listView_DragDrop;
+            listView.DragOver += listView_DragOver;
+            listView.KeyDown += listView_KeyDown;
             // 
             // columnHeader_Name
             // 
@@ -163,12 +195,12 @@
             columnHeader_Version.Text = "版本";
             columnHeader_Version.Width = 150;
             // 
-            // ListViewSkel
+            // SpineListView
             // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(tableLayoutPanel);
-            Name = "ListViewSkel";
+            Name = "SpineListView";
             Size = new Size(336, 445);
             tableLayoutPanel.ResumeLayout(false);
             tableLayoutPanel.PerformLayout();
@@ -189,5 +221,7 @@
         private ColumnHeader columnHeader_Name;
         private ColumnHeader columnHeader_Version;
         private Button button_Add;
+        private Button button_RemoveAll;
+        private ToolTip toolTip;
     }
 }

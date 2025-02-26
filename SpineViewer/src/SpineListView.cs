@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using System.Collections.ObjectModel;
 using SpineViewer.Spine;
 using System.Reflection;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Diagnostics;
 
 namespace SpineViewer
 {
@@ -130,6 +132,15 @@ namespace SpineViewer
             }
         }
 
+        private void button_RemoveAll_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("确认移除所有项吗？", "操作确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+            {
+                spines.Clear();
+                listView.Items.Clear();
+            }
+        }
+
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listView.SelectedIndices.Count <= 0)
@@ -158,6 +169,77 @@ namespace SpineViewer
                 button_MoveDown.Enabled = false;
                 if (PropertyGrid is not null)
                     PropertyGrid.SelectedObject = null;
+            }
+        }
+
+        private void listView_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.A)
+            {
+                listView.BeginUpdate();
+                foreach (ListViewItem item in listView.Items)
+                {
+                    item.Selected = true;
+                }
+                listView.EndUpdate();
+            }
+        }
+
+        private void listView_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            DoDragDrop(e.Item, DragDropEffects.Move);
+        }
+
+        private void listView_DragOver(object sender, DragEventArgs e)
+        {
+            // 检查拖放目标是否有效
+            e.Effect = DragDropEffects.Move;
+
+            // 获取鼠标位置并确定目标索引
+            var point = listView.PointToClient(new(e.X, e.Y));
+            var targetItem = listView.GetItemAt(point.X, point.Y);
+
+            // 高亮目标项
+            if (targetItem != null)
+            {
+                foreach (ListViewItem item in listView.Items)
+                {
+                    item.BackColor = listView.BackColor;
+                }
+                targetItem.BackColor = Color.LightGray;
+            }
+        }
+
+        private void listView_DragDrop(object sender, DragEventArgs e)
+        {
+            // 获取拖放源项和目标项
+            var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
+            int draggedIndex = draggedItem.Index;
+            var draggedSpine = spines[draggedIndex];
+
+            var point = listView.PointToClient(new Point(e.X, e.Y));
+            var targetItem = listView.GetItemAt(point.X, point.Y);
+            int targetIndex = targetItem is null ? listView.Items.Count : targetItem.Index;
+
+            if (targetIndex <= draggedIndex)
+            {
+                spines.RemoveAt(draggedIndex);
+                spines.Insert(targetIndex, draggedSpine);
+                listView.Items.RemoveAt(draggedIndex);
+                listView.Items.Insert(targetIndex, draggedItem);
+            }
+            else
+            {
+                spines.RemoveAt(draggedIndex);
+                spines.Insert(targetIndex - 1, draggedSpine);
+                listView.Items.RemoveAt(draggedIndex);
+                listView.Items.Insert(targetIndex - 1, draggedItem);
+            }
+
+            // 重置背景颜色
+            foreach (ListViewItem item in listView.Items)
+            {
+                item.BackColor = listView.BackColor;
             }
         }
     }
