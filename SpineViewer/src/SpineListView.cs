@@ -33,18 +33,22 @@ namespace SpineViewer
         }
 
         /// <summary>
-        /// 弹出添加对话框
+        /// 弹出添加对话框在指定位置之前插入一项
         /// </summary>
-        public void Add()
+        private void Insert(int index = -1)
         {
+            // 如果索引无效则插在末尾
+            if (index < 0 || index > spines.Count)
+                index = spines.Count;
+
             var dialog = new OpenSpineDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
                     var spine = Spine.Spine.New(dialog.Version, dialog.SkelPath, dialog.AtlasPath);
-                    spines.Add(spine);
-                    listView.Items.Add(new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath });
+                    spines.Insert(index, spine);
+                    listView.Items.Insert(index, new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath });
                 }
                 catch (Exception ex)
                 {
@@ -56,6 +60,14 @@ namespace SpineViewer
         }
 
         /// <summary>
+        /// 弹出添加对话框
+        /// </summary>
+        public void Add() 
+        { 
+            Insert(); 
+        }
+
+        /// <summary>
         /// 弹出批量添加对话框
         /// </summary>
         public void BatchAdd()
@@ -63,111 +75,13 @@ namespace SpineViewer
             throw new NotImplementedException();
         }
 
-        private void button_Add_Click(object sender, EventArgs e)
-        {
-            Add();
-        }
-
-        private void button_Insert_Click(object sender, EventArgs e)
-        {
-            if (listView.SelectedIndices.Count <= 0)
-                return;
-
-            var index = listView.SelectedIndices[0];
-            var dialog = new OpenSpineDialog();
-            dialog.ShowDialog();
-            try
-            {
-                var spine = Spine.Spine.New(dialog.Version, dialog.SkelPath, dialog.AtlasPath);
-                spines.Insert(index, spine);
-                listView.Items.Insert(index, new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath });
-            }
-            catch (Exception ex)
-            {
-                Program.Logger.Error(ex.ToString());
-                Program.Logger.Error($"Failed to load {dialog.SkelPath} {dialog.AtlasPath}");
-                MessageBox.Show(ex.ToString(), "骨骼加载失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void button_Remove_Click(object sender, EventArgs e)
-        {
-            if (listView.SelectedIndices.Count <= 0)
-                return;
-
-            foreach (var i in listView.SelectedIndices.Cast<int>().OrderByDescending(x => x))
-            {
-                spines.RemoveAt(i);
-                listView.Items.RemoveAt(i);
-            }
-        }
-
-        private void button_MoveUp_Click(object sender, EventArgs e)
-        {
-            if (listView.SelectedIndices.Count <= 0)
-                return;
-
-            var index = listView.SelectedIndices[0];
-            if (index > 0)
-            {
-                (spines[index - 1], spines[index]) = (spines[index], spines[index - 1]);
-                var item = listView.Items[index];
-                listView.Items.RemoveAt(index);
-                listView.Items.Insert(index - 1, item);
-            }
-        }
-
-        private void button_MoveDown_Click(object sender, EventArgs e)
-        {
-            if (listView.SelectedIndices.Count <= 0)
-                return;
-
-            var index = listView.SelectedIndices[0];
-            if (index < spines.Count - 1)
-            {
-                (spines[index], spines[index + 1]) = (spines[index + 1], spines[index]);
-                var item = listView.Items[index + 1];
-                listView.Items.RemoveAt(index + 1);
-                listView.Items.Insert(index, item);
-            }
-        }
-
-        private void button_RemoveAll_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show("确认移除所有项吗？", "操作确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
-            {
-                spines.Clear();
-                listView.Items.Clear();
-            }
-        }
-
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (listView.SelectedIndices.Count <= 0)
+            if (PropertyGrid is not null)
             {
-                button_Insert.Enabled = false;
-                button_Remove.Enabled = false;
-                button_MoveUp.Enabled = false;
-                button_MoveDown.Enabled = false;
-                if (PropertyGrid is not null)
-                    PropertyGrid.SelectedObject = null;
-            }
-            else if (listView.SelectedIndices.Count <= 1)
-            {
-                button_Insert.Enabled = true;
-                button_Remove.Enabled = true;
-                button_MoveUp.Enabled = true;
-                button_MoveDown.Enabled = true;
-                if (PropertyGrid is not null)
+                if (listView.SelectedIndices.Count == 1)
                     PropertyGrid.SelectedObject = spines[listView.SelectedIndices[0]];
-            }
-            else
-            {
-                button_Insert.Enabled = false;
-                button_Remove.Enabled = true;
-                button_MoveUp.Enabled = false;
-                button_MoveDown.Enabled = false;
-                if (PropertyGrid is not null)
+                else
                     PropertyGrid.SelectedObject = null;
             }
         }
@@ -240,6 +154,65 @@ namespace SpineViewer
             foreach (ListViewItem item in listView.Items)
             {
                 item.BackColor = listView.BackColor;
+            }
+        }
+
+        private void contextMenuStrip_Opening(object sender, CancelEventArgs e)
+        {
+            var selectedCount = listView.SelectedIndices.Count;
+            var itemsCount = listView.Items.Count;
+            toolStripMenuItem_Insert.Enabled = selectedCount == 1;
+            toolStripMenuItem_Remove.Enabled = selectedCount >= 1;
+            toolStripMenuItem_RemoveAll.Enabled = itemsCount > 0;
+        }
+
+        private void toolStripMenuItem_Add_Click(object sender, EventArgs e)
+        {
+            Insert();
+        }
+
+        private void toolStripMenuItem_BatchAdd_Click(object sender, EventArgs e)
+        {
+            BatchAdd();
+        }
+
+        private void toolStripMenuItem_Insert_Click(object sender, EventArgs e)
+        {
+            if (listView.SelectedIndices.Count == 1)
+                Insert(listView.SelectedIndices[0]);
+        }
+
+        private void toolStripMenuItem_Remove_Click(object sender, EventArgs e)
+        {
+            if (listView.SelectedIndices.Count <= 0)
+                return;
+
+            if (listView.SelectedIndices.Count > 1)
+            {
+                if (MessageBox.Show($"确定移除所选 {listView.SelectedIndices.Count} 项？", "操作确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK)
+                {
+                    return;
+                }
+            }
+
+            foreach (var i in listView.SelectedIndices.Cast<int>().OrderByDescending(x => x))
+            {
+                spines.RemoveAt(i);
+                listView.Items.RemoveAt(i);
+            }
+        }
+
+        private void toolStripMenuItem_RemoveAll_Click(object sender, EventArgs e)
+        {
+            if (listView.Items.Count <= 0)
+                return;
+
+            if (MessageBox.Show("确认移除所有项吗？", "操作确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+            {
+                spines.Clear();
+                listView.Items.Clear();
+                if (PropertyGrid is not null) 
+                    PropertyGrid.SelectedObject = null;
             }
         }
     }
