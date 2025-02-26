@@ -44,10 +44,10 @@
             splitContainer_Functional = new SplitContainer();
             splitContainer_Information = new SplitContainer();
             groupBox_SkelList = new GroupBox();
-            listViewSkel = new ListViewSkel();
+            spineListView = new SpineListView();
+            propertyGrid_Skel = new PropertyGrid();
             splitContainer_Config = new SplitContainer();
             groupBox_SkelConfig = new GroupBox();
-            propertyGrid_Skel = new PropertyGrid();
             groupBox_PreviewConfig = new GroupBox();
             groupBox_Preview = new GroupBox();
             panel_PreviewContainer = new Panel();
@@ -239,7 +239,7 @@
             // 
             // groupBox_SkelList
             // 
-            groupBox_SkelList.Controls.Add(listViewSkel);
+            groupBox_SkelList.Controls.Add(spineListView);
             groupBox_SkelList.Dock = DockStyle.Fill;
             groupBox_SkelList.Location = new Point(0, 0);
             groupBox_SkelList.Name = "groupBox_SkelList";
@@ -248,14 +248,24 @@
             groupBox_SkelList.TabStop = false;
             groupBox_SkelList.Text = "模型列表";
             // 
-            // listViewSkel
+            // spineListView
             // 
-            listViewSkel.Dock = DockStyle.Fill;
-            listViewSkel.Location = new Point(3, 26);
-            listViewSkel.Name = "listViewSkel";
-            listViewSkel.PropertyGrid = propertyGrid_Skel;
-            listViewSkel.Size = new Size(330, 703);
-            listViewSkel.TabIndex = 0;
+            spineListView.Dock = DockStyle.Fill;
+            spineListView.Location = new Point(3, 26);
+            spineListView.Name = "spineListView";
+            spineListView.PropertyGrid = propertyGrid_Skel;
+            spineListView.Size = new Size(330, 703);
+            spineListView.TabIndex = 0;
+            // 
+            // propertyGrid_Skel
+            // 
+            propertyGrid_Skel.Dock = DockStyle.Fill;
+            propertyGrid_Skel.HelpVisible = false;
+            propertyGrid_Skel.Location = new Point(3, 26);
+            propertyGrid_Skel.Name = "propertyGrid_Skel";
+            propertyGrid_Skel.Size = new Size(352, 464);
+            propertyGrid_Skel.TabIndex = 0;
+            propertyGrid_Skel.ToolbarVisible = false;
             // 
             // splitContainer_Config
             // 
@@ -291,16 +301,6 @@
             groupBox_SkelConfig.TabIndex = 0;
             groupBox_SkelConfig.TabStop = false;
             groupBox_SkelConfig.Text = "模型参数";
-            // 
-            // propertyGrid_Skel
-            // 
-            propertyGrid_Skel.Dock = DockStyle.Fill;
-            propertyGrid_Skel.HelpVisible = false;
-            propertyGrid_Skel.Location = new Point(3, 26);
-            propertyGrid_Skel.Name = "propertyGrid_Skel";
-            propertyGrid_Skel.Size = new Size(352, 464);
-            propertyGrid_Skel.TabIndex = 0;
-            propertyGrid_Skel.ToolbarVisible = false;
             // 
             // groupBox_PreviewConfig
             // 
@@ -430,6 +430,6 @@
         private OpenFileDialog openFileDialog_Atlas;
         private ToolTip toolTip1;
         private PropertyGrid propertyGrid_Skel;
-        private ListViewSkel listViewSkel;
+        private SpineListView spineListView;
     }
 }

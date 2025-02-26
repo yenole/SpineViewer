@@ -1,6 +1,6 @@
 ﻿namespace SpineViewer.src
 {
-    partial class SkelBatchSelectForm
+    partial class BatchOpenSpineDialog
     {
         /// <summary>
         /// Required designer variable.

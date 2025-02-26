@@ -11,13 +11,13 @@ using System.Windows.Forms;
 
 namespace SpineViewer
 {
-    public partial class SkelSelectDialog : Form
+    public partial class OpenSpineDialog : Form
     {
         public string SkelPath { get; private set; }
         public string? AtlasPath { get; private set; }
         public Spine.Version Version { get; private set; }
 
-        public SkelSelectDialog()
+        public OpenSpineDialog()
         {
             InitializeComponent();
             comboBox_Version.DataSource = VersionHelper.Versions.ToList();

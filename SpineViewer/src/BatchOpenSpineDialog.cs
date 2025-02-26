@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace SpineViewer.src
 {
-    public partial class SkelBatchSelectForm: Form
+    public partial class BatchOpenSpineDialog: Form
     {
-        public SkelBatchSelectForm()
+        public BatchOpenSpineDialog()
         {
             InitializeComponent();
         }

@@ -45,18 +45,18 @@ namespace SpineViewer
 
         private void toolStripMenuItem_Open_Click(object sender, EventArgs e)
         {
-            listViewSkel.Add();
+            spineListView.Add();
         }
 
         private void toolStripMenuItem_BatchOpen_Click(object sender, EventArgs e)
         {
-            listViewSkel.BatchAdd();
+            spineListView.BatchAdd();
         }
 
         private void toolStripMenuItem_Export_Click(object sender, EventArgs e)
         {
             var a = new SizeF(10, 100);
-            listViewSkel.Spines[0].Position = listViewSkel.Spines[0].Position + a;
+            spineListView.Spines[0].Position = spineListView.Spines[0].Position + a;
         }
 
         private void toolStripMenuItem_Exit_Click(object sender, EventArgs e)

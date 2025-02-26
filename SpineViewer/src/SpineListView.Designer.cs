@@ -1,6 +1,6 @@
 ﻿namespace SpineViewer
 {
-    partial class ListViewSkel
+    partial class SpineListView
     {
         /// <summary> 
         /// 必需的设计器变量。

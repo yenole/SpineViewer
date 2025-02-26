@@ -1,6 +1,6 @@
 ﻿namespace SpineViewer
 {
-    partial class SkelSelectDialog
+    partial class OpenSpineDialog
     {
         /// <summary>
         /// Required designer variable.

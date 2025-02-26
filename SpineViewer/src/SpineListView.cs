@@ -14,7 +14,7 @@ using SpineViewer.src;
 
 namespace SpineViewer
 {
-    public partial class ListViewSkel : UserControl
+    public partial class SpineListView : UserControl
     {
         [Browsable(true), Category("自定义"), Description("用于显示骨骼属性的属性页")]
         public PropertyGrid? PropertyGrid { get; set; }
@@ -26,7 +26,7 @@ namespace SpineViewer
         public ReadOnlyCollection<Spine.Spine> Spines { get => spines.AsReadOnly(); }
         private readonly List<Spine.Spine> spines = [];
 
-        public ListViewSkel()
+        public SpineListView()
         {
             InitializeComponent();
         }
@@ -36,7 +36,7 @@ namespace SpineViewer
         /// </summary>
         public void Add()
         {
-            var dialog = new SkelSelectDialog();
+            var dialog = new OpenSpineDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 try
@@ -73,7 +73,7 @@ namespace SpineViewer
                 return;
 
             var index = listView.SelectedIndices[0];
-            var dialog = new SkelSelectDialog();
+            var dialog = new OpenSpineDialog();
             dialog.ShowDialog();
             try
             {
