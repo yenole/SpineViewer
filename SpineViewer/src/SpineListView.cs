@@ -136,10 +136,13 @@ namespace SpineViewer
         {
             if (PropertyGrid is not null)
             {
-                if (listView.SelectedIndices.Count == 1)
+
+                if (listView.SelectedIndices.Count <= 0)
+                    PropertyGrid.SelectedObject = null;
+                else if (listView.SelectedIndices.Count <= 1)
                     PropertyGrid.SelectedObject = spines[listView.SelectedIndices[0]];
                 else
-                    PropertyGrid.SelectedObject = null;
+                    PropertyGrid.SelectedObjects = listView.SelectedIndices.Cast<int>().Select(index => spines[index]).ToArray();
             }
         }
 
