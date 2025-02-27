@@ -136,53 +136,53 @@ namespace SpineViewer.Spine
         /// 获取所属版本
         /// </summary>
         [TypeConverter(typeof(VersionTypeConverter))]
-        [Browsable(true), Category("基本信息"), DisplayName("版本")]
+        [Category("基本信息"), DisplayName("版本")]
         public Version Version { get; }
 
         /// <summary>
         /// skel 文件完整路径
         /// </summary>
-        [Browsable(true), Category("基本信息"), DisplayName("skel文件路径")]
+        [Category("基本信息"), DisplayName("skel文件路径")]
         public string SkelPath { get; }
 
         /// <summary>
         /// atlas 文件完整路径
         /// </summary>
-        [Browsable(true), Category("基本信息"), DisplayName("atlas文件路径")]
+        [Category("基本信息"), DisplayName("atlas文件路径")]
         public string AtlasPath { get; }
 
-        [Browsable(true), Category("基本信息"), DisplayName("名称")]
+        [Category("基本信息"), DisplayName("名称")]
         public string Name { get; }
 
         /// <summary>
         /// 缩放比例
         /// </summary>
-        [Browsable(true), Category("空间变换"), DisplayName("缩放比例")]
+        [Category("空间变换"), DisplayName("缩放比例")]
         public abstract float Scale { get; set; }
 
         /// <summary>
         /// 位置
         /// </summary>
         [TypeConverter(typeof(PointFTypeConverter))]
-        [Browsable(true), Category("空间变换"), DisplayName("位置")]
+        [Category("空间变换"), DisplayName("位置")]
         public abstract PointF Position { get; set; }
 
         /// <summary>
         /// 水平翻转
         /// </summary>
-        [Browsable(true), Category("空间变换"), DisplayName("水平翻转")]
+        [Category("空间变换"), DisplayName("水平翻转")]
         public abstract bool FlipX { get; set; }
 
         /// <summary>
         /// 垂直翻转
         /// </summary>
-        [Browsable(true), Category("空间变换"), DisplayName("垂直翻转")]
+        [Category("空间变换"), DisplayName("垂直翻转")]
         public abstract bool FlipY { get; set; }
 
         /// <summary>
         /// 是否使用预乘Alpha
         /// </summary>
-        [Browsable(true), Category("其他"), DisplayName("预乘Alpha通道")]
+        [Category("其他"), DisplayName("预乘Alpha通道")]
         public bool UsePremultipliedAlpha { get; set; }
 
         /// <summary>
@@ -202,7 +202,7 @@ namespace SpineViewer.Spine
         /// 当前动画名称
         /// </summary>
         [TypeConverter(typeof(AnimationTypeConverter))]
-        [Browsable(true), Category("其他"), DisplayName("当前播放动画"), PropertyTab()]
+        [Category("其他"), DisplayName("当前播放动画"), PropertyTab()]
         public abstract string CurrentAnimation { get; set; }
 
         /// <summary>

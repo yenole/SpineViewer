@@ -16,7 +16,7 @@ namespace SpineViewer
 {
     public partial class SpineListView : UserControl
     {
-        [Browsable(true), Category("自定义"), Description("用于显示骨骼属性的属性页")]
+        [Category("自定义"), Description("用于显示骨骼属性的属性页")]
         public PropertyGrid? PropertyGrid { get; set; }
 
         /// <summary>
@@ -71,40 +71,64 @@ namespace SpineViewer
         /// </summary>
         public void BatchAdd()
         {
-            var dialog = new BatchOpenSpineDialog();
-            if (dialog.ShowDialog() != DialogResult.OK)
+            var openDialog = new BatchOpenSpineDialog();
+            if (openDialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            int totalCount = dialog.SkelPaths.Length;
-            int errorCount = 0;
+            var progressDialog = new ProgressDialog();
+            progressDialog.Dowork += BatchAdd_Work;
+            progressDialog.RunWorkerAsync(new { openDialog.SkelPaths, openDialog.Version });
+            progressDialog.ShowDialog();
+        }
 
-            var version = dialog.Version;
-            for (int i = 0;  i < totalCount; i++) 
+        private void BatchAdd_Work(object? sender, DoWorkEventArgs e)
+        {
+            var worker = sender as BackgroundWorker;
+            var arguments = e.Argument as dynamic;
+            var skelPaths = arguments.SkelPaths as string[];
+            var version = (Spine.Version)arguments.Version;
+
+            int totalCount = skelPaths.Length;
+            int success = 0;
+            int error = 0;
+
+            for (int i = 0; i < totalCount; i++)
             {
-                var skelPath = dialog.SkelPaths[i];
-                Program.Logger.Info("[{}/{}] loading {}", i + 1, totalCount, skelPath);
+                if (worker.CancellationPending)
+                    break;
+
+                var skelPath = skelPaths[i];
+
+                worker.ReportProgress((int)((i + 1) * 100.0) / totalCount, $"正在处理 {i + 1}/{totalCount}");
                 try
                 {
                     var spine = Spine.Spine.New(version, skelPath);
                     spines.Add(spine);
-                    listView.Items.Add(new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath });
+                    if (listView.InvokeRequired)
+                    {
+                        listView.Invoke(() => listView.Items.Add(new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath }));
+                    }
+                    else
+                    {
+                        listView.Items.Add(new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath });
+                    }
+                    success++;
                 }
                 catch (Exception ex)
                 {
                     Program.Logger.Error(ex.ToString());
                     Program.Logger.Error("Failed to load {}", skelPath);
-                    errorCount++;
+                    error++;
                 }
             }
 
-            if (errorCount > 0)
+            if (error > 0)
             {
-                Program.Logger.Warn("Batch load {} successfully, {} failed", totalCount - errorCount, errorCount);
-                MessageBox.Show($"{totalCount - errorCount}成功，{errorCount}失败", "部分骨骼加载失败", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Program.Logger.Warn("Batch load {} successfully, {} failed", success, error);
             }
             else
             {
-                Program.Logger.Info("{} skel loaded successfully", totalCount);
+                Program.Logger.Info("{} skel loaded successfully", success);
             }
         }
 

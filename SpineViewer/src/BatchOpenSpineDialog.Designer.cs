@@ -30,6 +30,7 @@
         {
             panel = new Panel();
             tableLayoutPanel1 = new TableLayoutPanel();
+            label4 = new Label();
             label3 = new Label();
             comboBox_Version = new ComboBox();
             tableLayoutPanel2 = new TableLayoutPanel();
@@ -39,7 +40,6 @@
             button_SelectSkel = new Button();
             label_Tip = new Label();
             openFileDialog_Skel = new OpenFileDialog();
-            label4 = new Label();
             panel.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -78,6 +78,19 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.Size = new Size(1026, 424);
             tableLayoutPanel1.TabIndex = 1;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            tableLayoutPanel1.SetColumnSpan(label4, 4);
+            label4.Dock = DockStyle.Fill;
+            label4.Location = new Point(15, 15);
+            label4.Margin = new Padding(15);
+            label4.Name = "label4";
+            label4.Size = new Size(996, 24);
+            label4.TabIndex = 14;
+            label4.Text = "说明：批量导入只需要选择skel文件，atlas文件需要在同目录下并且与skel文件名相同";
+            label4.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label3
             // 
@@ -147,6 +160,7 @@
             tableLayoutPanel1.SetColumnSpan(listBox_FilePath, 2);
             listBox_FilePath.Dock = DockStyle.Fill;
             listBox_FilePath.FormattingEnabled = true;
+            listBox_FilePath.HorizontalScrollbar = true;
             listBox_FilePath.ItemHeight = 24;
             listBox_FilePath.Location = new Point(3, 97);
             listBox_FilePath.Name = "listBox_FilePath";
@@ -181,19 +195,6 @@
             openFileDialog_Skel.AddToRecent = false;
             openFileDialog_Skel.Filter = "skel 文件 (*.skel; *.json)|*.skel;*.json";
             openFileDialog_Skel.Multiselect = true;
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            tableLayoutPanel1.SetColumnSpan(label4, 4);
-            label4.Dock = DockStyle.Fill;
-            label4.Location = new Point(15, 15);
-            label4.Margin = new Padding(15);
-            label4.Name = "label4";
-            label4.Size = new Size(996, 24);
-            label4.TabIndex = 14;
-            label4.Text = "说明：批量导入只需要选择skel文件，atlas文件需要在同目录下并且与skel文件名相同";
-            label4.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // BatchOpenSpineDialog
             // 
