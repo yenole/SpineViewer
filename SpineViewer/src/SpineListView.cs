@@ -49,6 +49,10 @@ namespace SpineViewer
                 var spine = Spine.Spine.New(dialog.Version, dialog.SkelPath, dialog.AtlasPath);
                 spines.Insert(index, spine);
                 listView.Items.Insert(index, new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath });
+
+                // 选中新增项
+                listView.SelectedIndices.Clear();
+                listView.SelectedIndices.Add(index);
             }
             catch (Exception ex)
             {
@@ -257,7 +261,7 @@ namespace SpineViewer
 
             if (listView.SelectedIndices.Count > 1)
             {
-                if (MessageBox.Show($"确定移除所选 {listView.SelectedIndices.Count} 项？", "操作确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK)
+                if (MessageBox.Show($"确定移除所选 {listView.SelectedIndices.Count} 项吗？", "操作确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK)
                 {
                     return;
                 }
@@ -275,7 +279,7 @@ namespace SpineViewer
             if (listView.Items.Count <= 0)
                 return;
 
-            if (MessageBox.Show("确认移除所有项吗？", "操作确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+            if (MessageBox.Show($"确认移除所有 {listView.SelectedIndices.Count} 项吗？", "操作确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
             {
                 spines.Clear();
                 listView.Items.Clear();
