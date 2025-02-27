@@ -76,7 +76,7 @@ namespace SpineViewer
                 return;
 
             var progressDialog = new ProgressDialog();
-            progressDialog.Dowork += BatchAdd_Work;
+            progressDialog.DoWork += BatchAdd_Work;
             progressDialog.RunWorkerAsync(new { openDialog.SkelPaths, openDialog.Version });
             progressDialog.ShowDialog();
         }
@@ -103,13 +103,18 @@ namespace SpineViewer
                 try
                 {
                     var spine = Spine.Spine.New(version, skelPath);
-                    spines.Add(spine);
+                    // 对 spines 和 Items 的操作都要转到窗口线程操作
                     if (listView.InvokeRequired)
                     {
-                        listView.Invoke(() => listView.Items.Add(new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath }));
+                        listView.Invoke(() =>
+                        {
+                            spines.Add(spine);
+                            listView.Items.Add(new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath });
+                        });
                     }
                     else
                     {
+                        spines.Add(spine);
                         listView.Items.Add(new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath });
                     }
                     success++;

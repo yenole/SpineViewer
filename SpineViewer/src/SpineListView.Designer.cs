@@ -34,11 +34,11 @@
             columnHeader_Version = new ColumnHeader();
             contextMenuStrip = new ContextMenuStrip(components);
             toolStripMenuItem_Add = new ToolStripMenuItem();
+            toolStripMenuItem_BatchAdd = new ToolStripMenuItem();
             toolStripMenuItem_Insert = new ToolStripMenuItem();
             toolStripMenuItem_Remove = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             toolStripMenuItem_RemoveAll = new ToolStripMenuItem();
-            toolStripMenuItem_BatchAdd = new ToolStripMenuItem();
             contextMenuStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -78,21 +78,28 @@
             contextMenuStrip.ImageScalingSize = new Size(24, 24);
             contextMenuStrip.Items.AddRange(new ToolStripItem[] { toolStripMenuItem_Add, toolStripMenuItem_BatchAdd, toolStripMenuItem_Insert, toolStripMenuItem_Remove, toolStripSeparator1, toolStripMenuItem_RemoveAll });
             contextMenuStrip.Name = "contextMenuStrip";
-            contextMenuStrip.Size = new Size(241, 193);
+            contextMenuStrip.Size = new Size(188, 160);
             contextMenuStrip.Opening += contextMenuStrip_Opening;
             // 
             // toolStripMenuItem_Add
             // 
             toolStripMenuItem_Add.Name = "toolStripMenuItem_Add";
-            toolStripMenuItem_Add.Size = new Size(240, 30);
+            toolStripMenuItem_Add.Size = new Size(187, 30);
             toolStripMenuItem_Add.Text = "添加(&A)...";
             toolStripMenuItem_Add.Click += toolStripMenuItem_Add_Click;
+            // 
+            // toolStripMenuItem_BatchAdd
+            // 
+            toolStripMenuItem_BatchAdd.Name = "toolStripMenuItem_BatchAdd";
+            toolStripMenuItem_BatchAdd.Size = new Size(187, 30);
+            toolStripMenuItem_BatchAdd.Text = "批量添加(&B)...";
+            toolStripMenuItem_BatchAdd.Click += toolStripMenuItem_BatchAdd_Click;
             // 
             // toolStripMenuItem_Insert
             // 
             toolStripMenuItem_Insert.Enabled = false;
             toolStripMenuItem_Insert.Name = "toolStripMenuItem_Insert";
-            toolStripMenuItem_Insert.Size = new Size(240, 30);
+            toolStripMenuItem_Insert.Size = new Size(187, 30);
             toolStripMenuItem_Insert.Text = "插入(&I)...";
             toolStripMenuItem_Insert.Click += toolStripMenuItem_Insert_Click;
             // 
@@ -100,29 +107,22 @@
             // 
             toolStripMenuItem_Remove.Enabled = false;
             toolStripMenuItem_Remove.Name = "toolStripMenuItem_Remove";
-            toolStripMenuItem_Remove.Size = new Size(240, 30);
+            toolStripMenuItem_Remove.Size = new Size(187, 30);
             toolStripMenuItem_Remove.Text = "移除(&R)";
             toolStripMenuItem_Remove.Click += toolStripMenuItem_Remove_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(237, 6);
+            toolStripSeparator1.Size = new Size(184, 6);
             // 
             // toolStripMenuItem_RemoveAll
             // 
             toolStripMenuItem_RemoveAll.Enabled = false;
             toolStripMenuItem_RemoveAll.Name = "toolStripMenuItem_RemoveAll";
-            toolStripMenuItem_RemoveAll.Size = new Size(240, 30);
+            toolStripMenuItem_RemoveAll.Size = new Size(187, 30);
             toolStripMenuItem_RemoveAll.Text = "移除全部(&X)";
             toolStripMenuItem_RemoveAll.Click += toolStripMenuItem_RemoveAll_Click;
-            // 
-            // toolStripMenuItem_BatchAdd
-            // 
-            toolStripMenuItem_BatchAdd.Name = "toolStripMenuItem_BatchAdd";
-            toolStripMenuItem_BatchAdd.Size = new Size(240, 30);
-            toolStripMenuItem_BatchAdd.Text = "批量添加(&B)...";
-            toolStripMenuItem_BatchAdd.Click += toolStripMenuItem_BatchAdd_Click;
             // 
             // SpineListView
             // 
@@ -136,7 +136,6 @@
         }
 
         #endregion
-        private ListView listView;
         private ColumnHeader columnHeader_Name;
         private ColumnHeader columnHeader_Version;
         private ContextMenuStrip contextMenuStrip;
@@ -146,5 +145,6 @@
         private ToolStripMenuItem toolStripMenuItem_RemoveAll;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem toolStripMenuItem_BatchAdd;
+        private ListView listView;
     }
 }

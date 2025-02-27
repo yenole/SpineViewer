@@ -13,7 +13,7 @@ namespace SpineViewer
     public partial class ProgressDialog : Form
     {
         [Category("自定义"), Description("BackgroundWorker 的 DoWork 事件")]
-        public event DoWorkEventHandler? Dowork
+        public event DoWorkEventHandler? DoWork
         {
             add { backgroundWorker.DoWork += value; }
             remove { backgroundWorker.DoWork -= value; }
