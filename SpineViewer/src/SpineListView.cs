@@ -95,7 +95,10 @@ namespace SpineViewer
             for (int i = 0; i < totalCount; i++)
             {
                 if (worker.CancellationPending)
+                {
+                    e.Cancel = true;
                     break;
+                }
 
                 var skelPath = skelPaths[i];
 
