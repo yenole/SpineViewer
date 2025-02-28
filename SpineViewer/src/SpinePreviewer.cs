@@ -390,6 +390,7 @@ namespace SpineViewer
 
         private void DrawBackground()
         {
+            // 绘制网格背景
             var P = RenderWindow.MapPixelToCoords(new(0, 0));
             var Q = RenderWindow.MapPixelToCoords(new(BACKGROUND_CELL_SIZE, BACKGROUND_CELL_SIZE));
             var step = Q - P;
@@ -415,6 +416,7 @@ namespace SpineViewer
                 hasOffset = !hasOffset;
             }
 
+            // 绘制坐标轴
             var origin = RenderWindow.MapCoordsToPixel(new(0, 0));
             var clientRect = panel.ClientRectangle;
             if (origin.X > clientRect.Left && origin.X < clientRect.Right ||
