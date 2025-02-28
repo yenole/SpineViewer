@@ -78,11 +78,17 @@ namespace SpineViewer
 
         public const float ZOOM_MAX = 1000f;
         public const float ZOOM_MIN = 0.001f;
+        public const int BACKGROUND_CELL_SIZE = 10;
+
+        private static readonly SFML.Graphics.Color BackgroundColor = SFML.Graphics.Color.White;
+        private static readonly SFML.Graphics.Color AxisColor = SFML.Graphics.Color.Red;
+
+        private readonly SFML.Graphics.RectangleShape BackgroundCell = new() { FillColor = new(220, 220, 220) };
+        private readonly SFML.Graphics.VertexArray XAxisVertex = new (SFML.Graphics.PrimitiveType.Lines, 2);
+        private readonly SFML.Graphics.VertexArray YAxisVertex = new(SFML.Graphics.PrimitiveType.Lines, 2);
 
         private readonly SFML.Graphics.RenderWindow RenderWindow;
         private readonly SFML.System.Clock Clock = new();
-        private readonly SFML.Graphics.Color BackgroundColor = SFML.Graphics.Color.Green;
-
         private SFML.System.Vector2f? draggingSrc = null;
         private Spine.Spine? draggingSpine = null;
 
@@ -112,9 +118,14 @@ namespace SpineViewer
             RenderWindow = new(panel.Handle);
             RenderWindow.SetFramerateLimit(30);
             RenderWindow.SetActive(false);
-            Resolution = new(1280, 720);
+            Resolution = new(2048, 2048);
             Center = new(0, 0);
             FlipY = true;
+
+            XAxisVertex[0] = new(new(0, 0), AxisColor);
+            XAxisVertex[1] = new(new(0, 0), AxisColor);
+            YAxisVertex[0] = new(new(0, 0), AxisColor);
+            YAxisVertex[1] = new(new(0, 0), AxisColor);
         }
 
         /// <summary>
@@ -377,6 +388,50 @@ namespace SpineViewer
             PropertyGrid?.Refresh();
         }
 
+        private void DrawBackground()
+        {
+            var P = RenderWindow.MapPixelToCoords(new(0, 0));
+            var Q = RenderWindow.MapPixelToCoords(new(BACKGROUND_CELL_SIZE, BACKGROUND_CELL_SIZE));
+            var step = Q - P;
+            BackgroundCell.Size = step;
+
+            var view = RenderWindow.GetView();
+            var size = view.Size;
+            var leftTop = view.Center - size / 2;
+
+            var xCount = (int)Math.Ceiling(size.X / step.X);
+            var yCount = (int)Math.Ceiling(size.Y / step.Y);
+
+            bool hasOffset = false;
+            var x = leftTop.X;
+            for (int i = 0; i < xCount; i++, x += step.X)
+            {
+                var y = leftTop.Y + (hasOffset ? step.Y : 0);
+                for (int j = 0; j < yCount; j++, y += step.Y * 2)
+                {
+                    BackgroundCell.Position = new(x, y);
+                    RenderWindow.Draw(BackgroundCell);
+                }
+                hasOffset = !hasOffset;
+            }
+
+            var origin = RenderWindow.MapCoordsToPixel(new(0, 0));
+            var clientRect = panel.ClientRectangle;
+            if (origin.X > clientRect.Left && origin.X < clientRect.Right ||
+                origin.Y > clientRect.Top && origin.Y < clientRect.Bottom)
+            {
+                var rightBottom = view.Center + size / 2;
+                XAxisVertex[0] = new(new(leftTop.X, 0), AxisColor);
+                XAxisVertex[1] = new(new(rightBottom.X, 0), AxisColor);
+                YAxisVertex[0] = new(new(0, leftTop.Y), AxisColor);
+                YAxisVertex[1] = new(new(0, rightBottom.Y), AxisColor);
+
+                // 绘制坐标轴
+                RenderWindow.Draw(XAxisVertex);
+                RenderWindow.Draw(YAxisVertex);
+            }
+        }
+
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             RenderWindow.SetActive(true);
@@ -387,9 +442,13 @@ namespace SpineViewer
                 delta = Clock.ElapsedTime.AsSeconds();
                 Clock.Restart();
 
-                // TODO: 绘制网格线
                 RenderWindow.Clear(BackgroundColor);
 
+                // 渲染背景网格
+                DrawBackground();
+
+
+                // 渲染 Spine
                 foreach (var spine in Spines.Reverse())
                 {
                     spine.Update(delta);
