@@ -34,7 +34,7 @@
             // 
             // panel
             // 
-            panel.BackColor = SystemColors.ControlDark;
+            panel.BackColor = SystemColors.Control;
             panel.Location = new Point(160, 160);
             panel.Margin = new Padding(0);
             panel.Name = "panel";
@@ -54,6 +54,7 @@
             // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = SystemColors.ControlDark;
             Controls.Add(panel);
             Name = "SpinePreviewer";
             Size = new Size(640, 640);

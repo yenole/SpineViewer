@@ -65,9 +65,9 @@ namespace SpineViewer
         /// <summary>
         /// 弹出添加对话框
         /// </summary>
-        public void Add() 
-        { 
-            Insert(); 
+        public void Add()
+        {
+            Insert();
         }
 
         /// <summary>
@@ -235,6 +235,8 @@ namespace SpineViewer
             var itemsCount = listView.Items.Count;
             toolStripMenuItem_Insert.Enabled = selectedCount == 1;
             toolStripMenuItem_Remove.Enabled = selectedCount >= 1;
+            toolStripMenuItem_MoveUp.Enabled = selectedCount == 1 && listView.SelectedIndices[0] != 0;
+            toolStripMenuItem_MoveDown.Enabled = selectedCount == 1 && listView.SelectedIndices[0] != itemsCount - 1;
             toolStripMenuItem_RemoveAll.Enabled = itemsCount > 0;
         }
 
@@ -274,6 +276,37 @@ namespace SpineViewer
             }
         }
 
+
+        private void toolStripMenuItem_MoveUp_Click(object sender, EventArgs e)
+        {
+            if (listView.SelectedIndices.Count != 1)
+                return;
+
+            var index = listView.SelectedIndices[0];
+            if (index > 0)
+            {
+                (spines[index - 1], spines[index]) = (spines[index], spines[index - 1]);
+                var item = listView.Items[index];
+                listView.Items.RemoveAt(index);
+                listView.Items.Insert(index - 1, item);
+            }
+        }
+
+        private void toolStripMenuItem_MoveDown_Click(object sender, EventArgs e)
+        {
+            if (listView.SelectedIndices.Count != 1)
+                return;
+
+            var index = listView.SelectedIndices[0];
+            if (index < spines.Count - 1)
+            {
+                (spines[index], spines[index + 1]) = (spines[index + 1], spines[index]);
+                var item = listView.Items[index + 1];
+                listView.Items.RemoveAt(index + 1);
+                listView.Items.Insert(index, item);
+            }
+        }
+
         private void toolStripMenuItem_RemoveAll_Click(object sender, EventArgs e)
         {
             if (listView.Items.Count <= 0)
@@ -283,9 +316,10 @@ namespace SpineViewer
             {
                 spines.Clear();
                 listView.Items.Clear();
-                if (PropertyGrid is not null) 
+                if (PropertyGrid is not null)
                     PropertyGrid.SelectedObject = null;
             }
         }
+
     }
 }

@@ -42,8 +42,6 @@ namespace SpineViewer
             LogManager.ReconfigExistingLoggers();
         }
 
-        #region ≤Àµ•¿∏
-
         private void toolStripMenuItem_Open_Click(object sender, EventArgs e)
         {
             spineListView.Add();
@@ -69,13 +67,11 @@ namespace SpineViewer
             Close();
         }
 
-        #endregion
-
-        #region ‘§¿¿ª≠√Ê
-
-        #endregion
-
-        #region ‘”œÓ
+        private void toolStripMenuItem_ResetAnimation_Click(object sender, EventArgs e)
+        {
+            foreach (var spine in spineListView.Spines)
+                spine.CurrentAnimation = spine.CurrentAnimation;
+        }
 
         private void splitContainer_SplitterMoved(object sender, SplitterEventArgs e)
         {
@@ -92,6 +88,5 @@ namespace SpineViewer
             (sender as PropertyGrid)?.Refresh();
         }
 
-        #endregion
     }
 }
