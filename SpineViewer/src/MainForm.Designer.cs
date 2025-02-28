@@ -341,8 +341,8 @@
             spinePreviewer.Name = "spinePreviewer";
             spinePreviewer.PropertyGrid = propertyGrid_Previewer;
             spinePreviewer.Size = new Size(986, 766);
+            spinePreviewer.SpineListView = spineListView;
             spinePreviewer.TabIndex = 0;
-            spinePreviewer.RenderFrame += spinePreviewer_RenderFrame;
             // 
             // panel_MainForm
             // 

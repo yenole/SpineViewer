@@ -61,6 +61,7 @@ namespace SpineViewer
             Program.Logger.Warn("Warn Test");
             Program.Logger.Error("Error Test");
             Program.Logger.Fatal("Fatal Test");
+            spinePreviewer.StopPreview();
         }
 
         private void toolStripMenuItem_Exit_Click(object sender, EventArgs e)
@@ -70,29 +71,7 @@ namespace SpineViewer
 
         #endregion
 
-        #region 画面参数
-        #endregion
-
         #region 预览画面
-
-        private void spinePreviewer_RenderFrame(object sender, RenderFrameEventArgs e)
-        {
-            var target = e.RenderTarget;
-            var delta = e.Delta;
-            Spine.Spine[] spines = null;
-
-            // 需要在控件线程拿到数组浅拷贝副本
-            if (spineListView.InvokeRequired)
-                spineListView.Invoke(() => spines = spineListView.Spines.ToArray());
-            else
-                spines = spineListView.Spines.ToArray();
-
-            foreach (var spine in spines.Reverse())
-            {
-                spine.Update(delta);
-                target.Draw(spine);
-            }
-        }
 
         #endregion
 

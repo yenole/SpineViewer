@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Security.Policy;
+using System.Diagnostics;
+using NLog.Targets;
 
 namespace SpineViewer
 {
@@ -58,6 +60,9 @@ namespace SpineViewer
             public bool FlipY { get => previewer.FlipY; set => previewer.FlipY = value; }
         }
 
+        [Category("自定义"), Description("相关联的 SpineListView")]
+        public SpineListView? SpineListView { get; set; }
+
         [Category("自定义"), Description("用于显示画面属性的属性页")]
         public PropertyGrid? PropertyGrid
         {
@@ -71,13 +76,32 @@ namespace SpineViewer
         }
         private PropertyGrid? propertyGrid;
 
-        [Category("自定义"), Description("帧渲染事件")]
-        public event EventHandler<RenderFrameEventArgs>? RenderFrame;
-        private void OnRenderFrame(float delta) { RenderFrame?.Invoke(this, new(RenderWindow, delta)); }
+        public const float ZOOM_MAX = 1000f;
+        public const float ZOOM_MIN = 0.001f;
 
         private readonly SFML.Graphics.RenderWindow RenderWindow;
         private readonly SFML.System.Clock Clock = new();
         private readonly SFML.Graphics.Color BackgroundColor = SFML.Graphics.Color.Green;
+
+        private SFML.System.Vector2f? draggingSrc = null;
+        private Spine.Spine? draggingSpine = null;
+
+        private Spine.Spine[] Spines
+        {
+            get
+            {
+                if (SpineListView is null)
+                    return [];
+
+                // 需要在控件线程拿到数组浅拷贝副本
+                Spine.Spine[] spines = null;
+                if (SpineListView.InvokeRequired)
+                    SpineListView.Invoke(() => spines = SpineListView.Spines.ToArray());
+                else
+                    spines = SpineListView.Spines.ToArray();
+                return spines;
+            }
+        }
 
         public SpinePreviewer()
         {
@@ -89,9 +113,6 @@ namespace SpineViewer
             Center = new(0, 0);
             FlipY = true;
         }
-
-        public const float ZOOM_MAX = 1000f;
-        public const float ZOOM_MIN = 0.001f;
 
         /// <summary>
         /// 分辨率
@@ -233,12 +254,18 @@ namespace SpineViewer
             }
         }
 
+        /// <summary>
+        /// 开始预览
+        /// </summary>
         public void StartPreview()
         {
             if (!backgroundWorker.IsBusy)
                 backgroundWorker.RunWorkerAsync();
         }
 
+        /// <summary>
+        /// 停止预览
+        /// </summary>
         public void StopPreview()
         {
             if (backgroundWorker.IsBusy)
@@ -275,17 +302,54 @@ namespace SpineViewer
 
         private void panel_MouseDown(object sender, MouseEventArgs e)
         {
-
+            // 右键优先级高, 进入画面拖动模式, 需要重新记录源点
+            if ((e.Button & MouseButtons.Right) != 0)
+            {
+                draggingSrc = RenderWindow.MapPixelToCoords(new(e.X, e.Y));
+                Cursor = Cursors.Hand;
+            }
+            // 按下了左键并且右键是松开的
+            else if ((e.Button & MouseButtons.Left) != 0 && (MouseButtons & MouseButtons.Right) == 0)
+            {
+                draggingSrc = RenderWindow.MapPixelToCoords(new(e.X, e.Y));
+            }
         }
 
         private void panel_MouseMove(object sender, MouseEventArgs e)
         {
+            if (draggingSrc is null)
+                return;
 
+            var src = (SFML.System.Vector2f)draggingSrc;
+            var dst = RenderWindow.MapPixelToCoords(new(e.X, e.Y));
+            var delta = dst - src;
+
+            if ((e.Button & MouseButtons.Right) != 0)
+            {
+                Center -= new SizeF(delta.X, delta.Y);
+            }
+            else if ((e.Button & MouseButtons.Left) != 0)
+            {
+                // TODO: 移动 Spine
+            }
         }
 
         private void panel_MouseUp(object sender, MouseEventArgs e)
         {
-
+            // 右键高优先级, 结束画面拖动模式
+            if ((e.Button & MouseButtons.Right) != 0)
+            {
+                draggingSrc = null;
+                draggingSpine = null;
+                Cursor = Cursors.Default;
+                PropertyGrid?.Refresh();
+            }
+            // 按下了左键并且右键是松开的
+            else if ((e.Button & MouseButtons.Left) != 0 && (MouseButtons & MouseButtons.Right) == 0)
+            {
+                draggingSrc = null;
+                draggingSpine = null;
+            }
         }
 
         private void panel_MouseWheel(object sender, MouseEventArgs e)
@@ -297,16 +361,22 @@ namespace SpineViewer
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             RenderWindow.SetActive(true);
+            float delta = 0;
 
             while (!backgroundWorker.CancellationPending)
             {
-                var delta = Clock.ElapsedTime.AsSeconds();
+                delta = Clock.ElapsedTime.AsSeconds();
                 Clock.Restart();
 
                 // TODO: 绘制网格线
                 RenderWindow.Clear(BackgroundColor);
 
-                OnRenderFrame(delta);
+                foreach (var spine in Spines.Reverse())
+                {
+                    spine.Update(delta);
+                    RenderWindow.Draw(spine);
+                }
+
                 RenderWindow.Display();
             }
 
@@ -314,25 +384,4 @@ namespace SpineViewer
         }
     }
 
-    /// <summary>
-    /// RenderFrame 事件参数
-    /// </summary>
-    public class RenderFrameEventArgs : EventArgs
-    {
-        /// <summary>
-        /// 渲染目标
-        /// </summary>
-        public SFML.Graphics.RenderTarget RenderTarget { get; }
-
-        /// <summary>
-        /// 距离上一帧经过的时间, 单位秒
-        /// </summary>
-        public float Delta {  get; }
-
-        public RenderFrameEventArgs(SFML.Graphics.RenderTarget renderTarget, float delta)
-        {
-            RenderTarget = renderTarget;
-            Delta = delta;
-        }
-    }
 }
