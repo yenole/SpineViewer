@@ -35,10 +35,10 @@
             // panel
             // 
             panel.BackColor = SystemColors.ControlDark;
-            panel.Location = new Point(115, 75);
+            panel.Location = new Point(160, 160);
             panel.Margin = new Padding(0);
             panel.Name = "panel";
-            panel.Size = new Size(513, 446);
+            panel.Size = new Size(320, 320);
             panel.TabIndex = 1;
             panel.MouseDown += panel_MouseDown;
             panel.MouseMove += panel_MouseMove;
@@ -47,6 +47,7 @@
             // 
             // backgroundWorker
             // 
+            backgroundWorker.WorkerSupportsCancellation = true;
             backgroundWorker.DoWork += backgroundWorker_DoWork;
             // 
             // SpinePreviewer
@@ -55,7 +56,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(panel);
             Name = "SpinePreviewer";
-            Size = new Size(637, 534);
+            Size = new Size(640, 640);
             SizeChanged += SpinePreviewer_SizeChanged;
             ResumeLayout(false);
         }
