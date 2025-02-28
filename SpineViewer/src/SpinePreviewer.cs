@@ -86,6 +86,9 @@ namespace SpineViewer
         private SFML.System.Vector2f? draggingSrc = null;
         private Spine.Spine? draggingSpine = null;
 
+        /// <summary>
+        /// 安全获取 Spine 列表
+        /// </summary>
         private Spine.Spine[] Spines
         {
             get
@@ -305,6 +308,7 @@ namespace SpineViewer
             // 右键优先级高, 进入画面拖动模式, 需要重新记录源点
             if ((e.Button & MouseButtons.Right) != 0)
             {
+                draggingSpine = null;
                 draggingSrc = RenderWindow.MapPixelToCoords(new(e.X, e.Y));
                 Cursor = Cursors.Hand;
             }
@@ -312,6 +316,15 @@ namespace SpineViewer
             else if ((e.Button & MouseButtons.Left) != 0 && (MouseButtons & MouseButtons.Right) == 0)
             {
                 draggingSrc = RenderWindow.MapPixelToCoords(new(e.X, e.Y));
+                var src = new PointF(((SFML.System.Vector2f)draggingSrc).X, ((SFML.System.Vector2f)draggingSrc).Y);
+                foreach (var spine in Spines)
+                {
+                    if (spine.Bounds.Contains(src))
+                    {
+                        draggingSpine = spine;
+                        break;
+                    }
+                }
             }
         }
 
@@ -322,15 +335,18 @@ namespace SpineViewer
 
             var src = (SFML.System.Vector2f)draggingSrc;
             var dst = RenderWindow.MapPixelToCoords(new(e.X, e.Y));
-            var delta = dst - src;
+            var _delta = dst - src;
+            var delta = new SizeF(_delta.X, _delta.Y);
 
             if ((e.Button & MouseButtons.Right) != 0)
             {
-                Center -= new SizeF(delta.X, delta.Y);
+                Center -= delta;
             }
             else if ((e.Button & MouseButtons.Left) != 0)
             {
-                // TODO: 移动 Spine
+                if (draggingSpine is not null)
+                    draggingSpine.Position += delta;
+                draggingSrc = dst;
             }
         }
 
@@ -339,8 +355,8 @@ namespace SpineViewer
             // 右键高优先级, 结束画面拖动模式
             if ((e.Button & MouseButtons.Right) != 0)
             {
-                draggingSrc = null;
                 draggingSpine = null;
+                draggingSrc = null;
                 Cursor = Cursors.Default;
                 PropertyGrid?.Refresh();
             }
@@ -361,7 +377,7 @@ namespace SpineViewer
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             RenderWindow.SetActive(true);
-            float delta = 0;
+            float delta;
 
             while (!backgroundWorker.CancellationPending)
             {

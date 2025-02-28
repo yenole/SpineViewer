@@ -36,9 +36,9 @@ namespace SpineViewer
         /// </summary>
         private void Insert(int index = -1)
         {
-            // 如果索引无效则插在末尾
+            // 如果索引无效则插在开头
             if (index < 0 || index > spines.Count)
-                index = spines.Count;
+                index = 0;
 
             var dialog = new OpenSpineDialog();
             if (dialog.ShowDialog() != DialogResult.OK)
