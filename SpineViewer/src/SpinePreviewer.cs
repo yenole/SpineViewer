@@ -356,6 +356,8 @@ namespace SpineViewer
             if ((e.Button & MouseButtons.Right) != 0)
             {
                 draggingSpine = null;
+                SpineListView?.PropertyGrid?.Refresh(); // 面板刷新不能放在 Move 事件里, 会导致一直在 Move
+
                 draggingSrc = null;
                 Cursor = Cursors.Default;
                 PropertyGrid?.Refresh();
@@ -365,6 +367,7 @@ namespace SpineViewer
             {
                 draggingSrc = null;
                 draggingSpine = null;
+                SpineListView?.PropertyGrid?.Refresh();
             }
         }
 
