@@ -157,33 +157,33 @@ namespace SpineViewer.Spine
         /// <summary>
         /// 缩放比例
         /// </summary>
-        [Category("空间变换"), DisplayName("缩放比例")]
+        [Category("变换"), DisplayName("缩放比例")]
         public abstract float Scale { get; set; }
 
         /// <summary>
         /// 位置
         /// </summary>
         [TypeConverter(typeof(PointFTypeConverter))]
-        [Category("空间变换"), DisplayName("位置")]
+        [Category("变换"), DisplayName("位置")]
         public abstract PointF Position { get; set; }
 
         /// <summary>
         /// 水平翻转
         /// </summary>
-        [Category("空间变换"), DisplayName("水平翻转")]
+        [Category("变换"), DisplayName("水平翻转")]
         public abstract bool FlipX { get; set; }
 
         /// <summary>
         /// 垂直翻转
         /// </summary>
-        [Category("空间变换"), DisplayName("垂直翻转")]
+        [Category("变换"), DisplayName("垂直翻转")]
         public abstract bool FlipY { get; set; }
 
         /// <summary>
         /// 是否使用预乘Alpha
         /// </summary>
-        [Category("其他"), DisplayName("预乘Alpha通道")]
-        public bool UsePremultipliedAlpha { get; set; }
+        [Category("画面"), DisplayName("预乘Alpha通道")]
+        public bool UsePremultipliedAlpha { get; set; } = true;
 
         /// <summary>
         /// 包含的所有动画名称
@@ -202,8 +202,14 @@ namespace SpineViewer.Spine
         /// 当前动画名称
         /// </summary>
         [TypeConverter(typeof(AnimationTypeConverter))]
-        [Category("其他"), DisplayName("当前播放动画"), PropertyTab()]
+        [Category("动画"), DisplayName("当前动画")]
         public abstract string CurrentAnimation { get; set; }
+
+        /// <summary>
+        /// 当前动画时长
+        /// </summary>
+        [Category("动画"), DisplayName("当前动画时长")]
+        public float CurrentAnimationDuration { get => GetAnimationDuration(CurrentAnimation); }
 
         /// <summary>
         /// 骨骼包围盒

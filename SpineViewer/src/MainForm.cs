@@ -10,7 +10,11 @@ namespace SpineViewer
         public MainForm()
         {
             InitializeComponent();
+            propertyGrid_Previewer.SelectedObject = spinePreviewer.Property;
+
             InitializeLogConfiguration();
+            spinePreviewer.Property.Resolution = new(1280, 720);
+            spinePreviewer.StartPreview();
         }
 
         /// <summary>
@@ -31,10 +35,10 @@ namespace SpineViewer
             };
 
             rtbTarget.WordColoringRules.Add(new("[D]", "Gray", "Empty", FontStyle.Bold));
-            rtbTarget.WordColoringRules.Add(new("[I]", "Gray", "Empty", FontStyle.Bold));
+            rtbTarget.WordColoringRules.Add(new("[I]", "DimGray", "Empty", FontStyle.Bold));
             rtbTarget.WordColoringRules.Add(new("[W]", "DarkOrange", "Empty", FontStyle.Bold));
             rtbTarget.WordColoringRules.Add(new("[E]", "Red", "Empty", FontStyle.Bold));
-            rtbTarget.WordColoringRules.Add(new("[F]", "Red", "Empty", FontStyle.Bold));
+            rtbTarget.WordColoringRules.Add(new("[F]", "DarkRed", "Empty", FontStyle.Bold));
 
             LogManager.Configuration.AddTarget(rtbTarget);
             LogManager.Configuration.AddRule(LogLevel.Debug, LogLevel.Fatal, rtbTarget);
@@ -55,8 +59,11 @@ namespace SpineViewer
 
         private void toolStripMenuItem_Export_Click(object sender, EventArgs e)
         {
-            var a = new SizeF(10, 100);
-            spineListView.Spines[0].Position = spineListView.Spines[0].Position + a;
+            Program.Logger.Debug("Debug Test");
+            Program.Logger.Info("Info Test");
+            Program.Logger.Warn("Warn Test");
+            Program.Logger.Error("Error Test");
+            Program.Logger.Fatal("Fatal Test");
         }
 
         private void toolStripMenuItem_Exit_Click(object sender, EventArgs e)
@@ -70,6 +77,26 @@ namespace SpineViewer
         #endregion
 
         #region 预览画面
+
+        private void spinePreviewer_RenderFrame(object sender, RenderFrameEventArgs e)
+        {
+            var target = e.RenderTarget;
+            var delta = e.Delta;
+            Spine.Spine[] spines = null;
+
+            // 需要在控件线程拿到数组浅拷贝副本
+            if (spineListView.InvokeRequired)
+                spineListView.Invoke(() => spines = spineListView.Spines.ToArray());
+            else
+                spines = spineListView.Spines.ToArray();
+
+            foreach (var spine in spines.Reverse())
+            {
+                spine.Update(delta);
+                target.Draw(spine);
+            }
+        }
+
         #endregion
 
         #region 杂项
@@ -83,7 +110,12 @@ namespace SpineViewer
         {
             ActiveControl = null;
         }
-        
+
+        private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
+        {
+            (sender as PropertyGrid).Refresh();
+        }
+
         #endregion
     }
 }

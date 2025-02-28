@@ -49,13 +49,11 @@
             splitContainer_Config = new SplitContainer();
             groupBox_SkelConfig = new GroupBox();
             groupBox_PreviewConfig = new GroupBox();
+            propertyGrid_Previewer = new PropertyGrid();
             groupBox_Preview = new GroupBox();
-            panel_PreviewContainer = new Panel();
-            panel_Preview = new Panel();
+            spinePreviewer = new SpinePreviewer();
             panel_MainForm = new Panel();
-            openFileDialog_Skel = new OpenFileDialog();
-            openFileDialog_Atlas = new OpenFileDialog();
-            toolTip1 = new ToolTip(components);
+            toolTip = new ToolTip(components);
             menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer_MainForm).BeginInit();
             splitContainer_MainForm.Panel1.SuspendLayout();
@@ -75,8 +73,8 @@
             splitContainer_Config.Panel2.SuspendLayout();
             splitContainer_Config.SuspendLayout();
             groupBox_SkelConfig.SuspendLayout();
+            groupBox_PreviewConfig.SuspendLayout();
             groupBox_Preview.SuspendLayout();
-            panel_PreviewContainer.SuspendLayout();
             panel_MainForm.SuspendLayout();
             SuspendLayout();
             // 
@@ -266,6 +264,7 @@
             propertyGrid_Skel.Size = new Size(369, 506);
             propertyGrid_Skel.TabIndex = 0;
             propertyGrid_Skel.ToolbarVisible = false;
+            propertyGrid_Skel.PropertyValueChanged += propertyGrid_PropertyValueChanged;
             // 
             // splitContainer_Config
             // 
@@ -304,6 +303,7 @@
             // 
             // groupBox_PreviewConfig
             // 
+            groupBox_PreviewConfig.Controls.Add(propertyGrid_Previewer);
             groupBox_PreviewConfig.Dock = DockStyle.Fill;
             groupBox_PreviewConfig.Location = new Point(0, 0);
             groupBox_PreviewConfig.Name = "groupBox_PreviewConfig";
@@ -312,9 +312,20 @@
             groupBox_PreviewConfig.TabStop = false;
             groupBox_PreviewConfig.Text = "画面参数";
             // 
+            // propertyGrid_Previewer
+            // 
+            propertyGrid_Previewer.Dock = DockStyle.Fill;
+            propertyGrid_Previewer.HelpVisible = false;
+            propertyGrid_Previewer.Location = new Point(3, 26);
+            propertyGrid_Previewer.Name = "propertyGrid_Previewer";
+            propertyGrid_Previewer.Size = new Size(369, 227);
+            propertyGrid_Previewer.TabIndex = 1;
+            propertyGrid_Previewer.ToolbarVisible = false;
+            propertyGrid_Previewer.PropertyValueChanged += propertyGrid_PropertyValueChanged;
+            // 
             // groupBox_Preview
             // 
-            groupBox_Preview.Controls.Add(panel_PreviewContainer);
+            groupBox_Preview.Controls.Add(spinePreviewer);
             groupBox_Preview.Dock = DockStyle.Fill;
             groupBox_Preview.Location = new Point(0, 0);
             groupBox_Preview.Name = "groupBox_Preview";
@@ -323,23 +334,14 @@
             groupBox_Preview.TabStop = false;
             groupBox_Preview.Text = "预览画面";
             // 
-            // panel_PreviewContainer
+            // spinePreviewer
             // 
-            panel_PreviewContainer.Controls.Add(panel_Preview);
-            panel_PreviewContainer.Dock = DockStyle.Fill;
-            panel_PreviewContainer.Location = new Point(3, 26);
-            panel_PreviewContainer.Margin = new Padding(0);
-            panel_PreviewContainer.Name = "panel_PreviewContainer";
-            panel_PreviewContainer.Size = new Size(986, 766);
-            panel_PreviewContainer.TabIndex = 1;
-            // 
-            // panel_Preview
-            // 
-            panel_Preview.BackColor = SystemColors.ControlDark;
-            panel_Preview.Location = new Point(107, 95);
-            panel_Preview.Name = "panel_Preview";
-            panel_Preview.Size = new Size(256, 256);
-            panel_Preview.TabIndex = 0;
+            spinePreviewer.Dock = DockStyle.Fill;
+            spinePreviewer.Location = new Point(3, 26);
+            spinePreviewer.Name = "spinePreviewer";
+            spinePreviewer.Size = new Size(986, 766);
+            spinePreviewer.TabIndex = 0;
+            spinePreviewer.RenderFrame += spinePreviewer_RenderFrame;
             // 
             // panel_MainForm
             // 
@@ -351,17 +353,9 @@
             panel_MainForm.Size = new Size(1741, 973);
             panel_MainForm.TabIndex = 4;
             // 
-            // openFileDialog_Skel
+            // toolTip
             // 
-            openFileDialog_Skel.AddExtension = false;
-            openFileDialog_Skel.AddToRecent = false;
-            openFileDialog_Skel.Filter = "skel 文件 (*.skel; *.json)|*.skel;*.json";
-            // 
-            // openFileDialog_Atlas
-            // 
-            openFileDialog_Atlas.AddExtension = false;
-            openFileDialog_Atlas.AddToRecent = false;
-            openFileDialog_Atlas.Filter = "atlas 文件 (*.atlas)|*.atlas";
+            toolTip.ShowAlways = true;
             // 
             // MainForm
             // 
@@ -395,8 +389,8 @@
             ((System.ComponentModel.ISupportInitialize)splitContainer_Config).EndInit();
             splitContainer_Config.ResumeLayout(false);
             groupBox_SkelConfig.ResumeLayout(false);
+            groupBox_PreviewConfig.ResumeLayout(false);
             groupBox_Preview.ResumeLayout(false);
-            panel_PreviewContainer.ResumeLayout(false);
             panel_MainForm.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -424,12 +418,12 @@
         private ToolStripMenuItem toolStripMenuItem_About;
         private ToolStripMenuItem toolStripMenuItem_BatchOpen;
         private GroupBox groupBox_Preview;
-        private Panel panel_Preview;
-        private Panel panel_PreviewContainer;
         private OpenFileDialog openFileDialog_Skel;
         private OpenFileDialog openFileDialog_Atlas;
-        private ToolTip toolTip1;
+        private ToolTip toolTip;
         private PropertyGrid propertyGrid_Skel;
         private SpineListView spineListView;
+        private PropertyGrid propertyGrid_Previewer;
+        private SpinePreviewer spinePreviewer;
     }
 }
