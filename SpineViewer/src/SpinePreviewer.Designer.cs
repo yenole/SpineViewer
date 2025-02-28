@@ -43,6 +43,7 @@
             panel.MouseDown += panel_MouseDown;
             panel.MouseMove += panel_MouseMove;
             panel.MouseUp += panel_MouseUp;
+            panel.MouseWheel += panel_MouseWheel;
             // 
             // backgroundWorker
             // 

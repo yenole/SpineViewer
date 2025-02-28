@@ -10,10 +10,7 @@ namespace SpineViewer
         public MainForm()
         {
             InitializeComponent();
-            propertyGrid_Previewer.SelectedObject = spinePreviewer.Property;
-
             InitializeLogConfiguration();
-            spinePreviewer.Property.Resolution = new(1280, 720);
             spinePreviewer.StartPreview();
         }
 
@@ -113,7 +110,7 @@ namespace SpineViewer
 
         private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
-            (sender as PropertyGrid).Refresh();
+            (sender as PropertyGrid)?.Refresh();
         }
 
         #endregion

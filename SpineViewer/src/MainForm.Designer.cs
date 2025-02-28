@@ -339,6 +339,7 @@
             spinePreviewer.Dock = DockStyle.Fill;
             spinePreviewer.Location = new Point(3, 26);
             spinePreviewer.Name = "spinePreviewer";
+            spinePreviewer.PropertyGrid = propertyGrid_Previewer;
             spinePreviewer.Size = new Size(986, 766);
             spinePreviewer.TabIndex = 0;
             spinePreviewer.RenderFrame += spinePreviewer_RenderFrame;

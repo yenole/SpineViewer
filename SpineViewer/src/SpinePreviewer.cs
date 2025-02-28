@@ -13,7 +13,7 @@ namespace SpineViewer
 {
     public partial class SpinePreviewer : UserControl
     {
-        public class PreviewerProperty
+        private class PreviewerProperty
         {
             public const float ZOOM_MAX = 1000f;
             public const float ZOOM_MIN = 0.001f;
@@ -161,9 +161,19 @@ namespace SpineViewer
             }
         }
 
-        /// <summary>
-        /// 帧渲染事件
-        /// </summary>
+        [Category("自定义"), Description("用于显示画面属性的属性页")]
+        public PropertyGrid? PropertyGrid
+        {
+            get => propertyGrid;
+            set
+            {
+                propertyGrid = value;
+                if (propertyGrid is not null)
+                    propertyGrid.SelectedObject = Property;
+            }
+        }
+        private PropertyGrid? propertyGrid;
+
         [Category("自定义"), Description("帧渲染事件")]
         public event EventHandler<RenderFrameEventArgs>? RenderFrame;
         private void OnRenderFrame(float delta) { RenderFrame?.Invoke(this, new(RenderWindow, delta)); }
@@ -171,9 +181,7 @@ namespace SpineViewer
         private readonly SFML.Graphics.RenderWindow RenderWindow;
         private readonly SFML.System.Clock Clock = new();
         private readonly SFML.Graphics.Color BackgroundColor = SFML.Graphics.Color.Green;
-
-        [Browsable(false)]
-        public PreviewerProperty Property { get; }
+        private readonly PreviewerProperty Property;
 
         public SpinePreviewer()
         {
@@ -242,6 +250,12 @@ namespace SpineViewer
         private void panel_MouseUp(object sender, MouseEventArgs e)
         {
 
+        }
+
+        private void panel_MouseWheel(object sender, MouseEventArgs e)
+        {
+            Property.Zoom *= (e.Delta > 0 ? 1.1f : 0.9f);
+            PropertyGrid?.Refresh();
         }
 
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
