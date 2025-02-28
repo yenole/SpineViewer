@@ -34,7 +34,7 @@
             // 
             // panel
             // 
-            panel.BackColor = SystemColors.Control;
+            panel.BackColor = SystemColors.ControlDarkDark;
             panel.Location = new Point(160, 160);
             panel.Margin = new Padding(0);
             panel.Name = "panel";
