@@ -13,152 +13,49 @@ namespace SpineViewer
 {
     public partial class SpinePreviewer : UserControl
     {
+        /// <summary>
+        /// 包装类, 用于 PropertyGrid 显示
+        /// </summary>
         private class PreviewerProperty
         {
-            public const float ZOOM_MAX = 1000f;
-            public const float ZOOM_MIN = 0.001f;
+            private readonly SpinePreviewer previewer;
 
-            private readonly SFML.Graphics.RenderWindow RenderWindow;
-            private readonly Control ContainerControl;
-
-            public PreviewerProperty(SpinePreviewer previewer)
-            {
-                RenderWindow = previewer.RenderWindow;
-                ContainerControl = previewer;
-            }
+            public PreviewerProperty(SpinePreviewer previewer) { this.previewer = previewer; }
 
             /// <summary>
             /// 导出画面分辨率
             /// </summary>
             [TypeConverter(typeof(SizeTypeConverter))]
             [Category("属性"), DisplayName("分辨率")]
-            public Size Resolution
-            {
-                get => resolution;
-                set
-                {
-                    if (value.Width <= 0) value.Width = 100;
-                    if (value.Height <= 0) value.Height = 100;
-
-                    float parentX = ContainerControl.Width;
-                    float parentY = ContainerControl.Height;
-                    float sizeX = value.Width;
-                    float sizeY = value.Height;
-
-                    if ((sizeY / sizeX) < (parentY / parentX))
-                    {
-                        // 相同的 X, 子窗口 Y 更小
-                        sizeY = parentX * sizeY / sizeX;
-                        sizeX = parentX;
-                    }
-                    else
-                    {
-                        // 相同的 Y, 子窗口 X 更小
-                        sizeX = parentY * sizeX / sizeY;
-                        sizeY = parentY;
-                    }
-
-                    // 必须通过 SFML 的方法调整窗口
-                    RenderWindow.Position = new((int)(parentX - sizeX) / 2, (int)(parentY - sizeY) / 2);
-                    RenderWindow.Size = new((uint)sizeX, (uint)sizeY);
-
-                    // 将 view 的大小设置成于 resolution 相同的大小, 其余属性都不变
-                    var view = RenderWindow.GetView();
-                    var signX = Math.Sign(view.Size.X);
-                    var signY = Math.Sign(view.Size.Y);
-                    view.Size = new(value.Width * signX, value.Height * signY);
-                    RenderWindow.SetView(view);
-
-                    resolution = value;
-                }
-            }
-            private Size resolution = new(0, 0);
+            public Size Resolution { get => previewer.Resolution; set => previewer.Resolution = value; }
 
             [TypeConverter(typeof(PointFTypeConverter))]
             [Category("属性"), DisplayName("画面中心点")]
-            public PointF Center
-            {
-                get
-                {
-                    var center = RenderWindow.GetView().Center;
-                    return new(center.X, center.Y);
-                }
-                set
-                {
-                    var view = RenderWindow.GetView();
-                    view.Center = new(value.X, value.Y);
-                    RenderWindow.SetView(view);
-                }
-            }
+            public PointF Center { get => previewer.Center; set => previewer.Center = value; }
 
             /// <summary>
             /// 画面缩放
             /// </summary>
             [Category("属性"), DisplayName("缩放")]
-            public float Zoom
-            {
-                get => resolution.Width / Math.Abs(RenderWindow.GetView().Size.X);
-                set
-                {
-                    value = Math.Clamp(value, ZOOM_MIN, ZOOM_MAX);
-                    var view = RenderWindow.GetView();
-                    var signX = Math.Sign(view.Size.X);
-                    var signY = Math.Sign(view.Size.Y);
-                    view.Size = new(resolution.Width / value * signX, resolution.Height / value * signY);
-                    RenderWindow.SetView(view);
-                }
-            }
+            public float Zoom { get => previewer.Zoom; set => previewer.Zoom = value; }
 
             /// <summary>
             /// 画面旋转
             /// </summary>
             [Category("属性"), DisplayName("旋转")]
-            public float Rotation
-            {
-                get => RenderWindow.GetView().Rotation;
-                set
-                {
-                    var view = RenderWindow.GetView();
-                    view.Rotation = value;
-                    RenderWindow.SetView(view);
-                }
-            }
+            public float Rotation { get => previewer.Rotation; set => previewer.Rotation = value; }
 
             /// <summary>
             /// 画面旋转
             /// </summary>
             [Category("属性"), DisplayName("水平翻转")]
-            public bool FlipX
-            {
-                get => RenderWindow.GetView().Size.X < 0;
-                set
-                {
-                    var view = RenderWindow.GetView();
-                    var size = view.Size;
-                    if (size.X > 0 && value || size.X < 0 && !value)
-                        size.X *= -1;
-                    view.Size = size;
-                    RenderWindow.SetView(view);
-                }
-            }
+            public bool FlipX { get => previewer.FlipX; set => previewer.FlipX = value; }
 
             /// <summary>
             /// 画面旋转
             /// </summary>
             [Category("属性"), DisplayName("垂直翻转")]
-            public bool FlipY
-            {
-                get => RenderWindow.GetView().Size.Y < 0;
-                set
-                {
-                    var view = RenderWindow.GetView();
-                    var size = view.Size;
-                    if (size.Y > 0 && value || size.Y < 0 && !value)
-                        size.Y *= -1;
-                    view.Size = size;
-                    RenderWindow.SetView(view);
-                }
-            }
+            public bool FlipY { get => previewer.FlipY; set => previewer.FlipY = value; }
         }
 
         [Category("自定义"), Description("用于显示画面属性的属性页")]
@@ -169,7 +66,7 @@ namespace SpineViewer
             {
                 propertyGrid = value;
                 if (propertyGrid is not null)
-                    propertyGrid.SelectedObject = Property;
+                    propertyGrid.SelectedObject = new PreviewerProperty(this);
             }
         }
         private PropertyGrid? propertyGrid;
@@ -181,7 +78,6 @@ namespace SpineViewer
         private readonly SFML.Graphics.RenderWindow RenderWindow;
         private readonly SFML.System.Clock Clock = new();
         private readonly SFML.Graphics.Color BackgroundColor = SFML.Graphics.Color.Green;
-        private readonly PreviewerProperty Property;
 
         public SpinePreviewer()
         {
@@ -189,12 +85,152 @@ namespace SpineViewer
             RenderWindow = new(panel.Handle);
             RenderWindow.SetFramerateLimit(30);
             RenderWindow.SetActive(false);
-            Property = new(this)
+            Resolution = new(1280, 720);
+            Center = new(0, 0);
+            FlipY = true;
+        }
+
+        public const float ZOOM_MAX = 1000f;
+        public const float ZOOM_MIN = 0.001f;
+
+        /// <summary>
+        /// 分辨率
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false)]
+        public Size Resolution
+        {
+            get => resolution;
+            set
             {
-                Resolution = new(1280, 720),
-                Center = new(0, 0),
-                FlipY = true
-            };
+                if (value.Width <= 0) value.Width = 100;
+                if (value.Height <= 0) value.Height = 100;
+
+                float parentX = Width;
+                float parentY = Height;
+                float sizeX = value.Width;
+                float sizeY = value.Height;
+
+                if ((sizeY / sizeX) < (parentY / parentX))
+                {
+                    // 相同的 X, 子窗口 Y 更小
+                    sizeY = parentX * sizeY / sizeX;
+                    sizeX = parentX;
+                }
+                else
+                {
+                    // 相同的 Y, 子窗口 X 更小
+                    sizeX = parentY * sizeX / sizeY;
+                    sizeY = parentY;
+                }
+
+                // 必须通过 SFML 的方法调整窗口
+                RenderWindow.Position = new((int)(parentX - sizeX) / 2, (int)(parentY - sizeY) / 2);
+                RenderWindow.Size = new((uint)sizeX, (uint)sizeY);
+
+                // 将 view 的大小设置成于 resolution 相同的大小, 其余属性都不变
+                var view = RenderWindow.GetView();
+                var signX = Math.Sign(view.Size.X);
+                var signY = Math.Sign(view.Size.Y);
+                view.Size = new(value.Width * signX, value.Height * signY);
+                RenderWindow.SetView(view);
+
+                resolution = value;
+            }
+        }
+        private Size resolution = new(0, 0);
+
+        /// <summary>
+        /// 画面中心点
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false)]
+        public PointF Center
+        {
+            get
+            {
+                var center = RenderWindow.GetView().Center;
+                return new(center.X, center.Y);
+            }
+            set
+            {
+                var view = RenderWindow.GetView();
+                view.Center = new(value.X, value.Y);
+                RenderWindow.SetView(view);
+            }
+        }
+
+        /// <summary>
+        /// 画面缩放
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false)]
+        public float Zoom
+        {
+            get => resolution.Width / Math.Abs(RenderWindow.GetView().Size.X);
+            set
+            {
+                value = Math.Clamp(value, ZOOM_MIN, ZOOM_MAX);
+                var view = RenderWindow.GetView();
+                var signX = Math.Sign(view.Size.X);
+                var signY = Math.Sign(view.Size.Y);
+                view.Size = new(resolution.Width / value * signX, resolution.Height / value * signY);
+                RenderWindow.SetView(view);
+            }
+        }
+
+        /// <summary>
+        /// 画面旋转
+        /// </summary>
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public float Rotation
+        {
+            get => RenderWindow.GetView().Rotation;
+            set
+            {
+                var view = RenderWindow.GetView();
+                view.Rotation = value;
+                RenderWindow.SetView(view);
+            }
+        }
+
+        /// <summary>
+        /// 水平翻转
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false)]
+        public bool FlipX
+        {
+            get => RenderWindow.GetView().Size.X < 0;
+            set
+            {
+                var view = RenderWindow.GetView();
+                var size = view.Size;
+                if (size.X > 0 && value || size.X < 0 && !value)
+                    size.X *= -1;
+                view.Size = size;
+                RenderWindow.SetView(view);
+            }
+        }
+
+        /// <summary>
+        /// 垂直翻转
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false)]
+        public bool FlipY
+        {
+            get => RenderWindow.GetView().Size.Y < 0;
+            set
+            {
+                var view = RenderWindow.GetView();
+                var size = view.Size;
+                if (size.Y > 0 && value || size.Y < 0 && !value)
+                    size.Y *= -1;
+                view.Size = size;
+                RenderWindow.SetView(view);
+            }
         }
 
         public void StartPreview()
@@ -254,7 +290,7 @@ namespace SpineViewer
 
         private void panel_MouseWheel(object sender, MouseEventArgs e)
         {
-            Property.Zoom *= (e.Delta > 0 ? 1.1f : 0.9f);
+            Zoom *= (e.Delta > 0 ? 1.1f : 0.9f);
             PropertyGrid?.Refresh();
         }
 
