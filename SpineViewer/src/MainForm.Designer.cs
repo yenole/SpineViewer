@@ -419,8 +419,6 @@
         private ToolStripMenuItem toolStripMenuItem_About;
         private ToolStripMenuItem toolStripMenuItem_BatchOpen;
         private GroupBox groupBox_Preview;
-        private OpenFileDialog openFileDialog_Skel;
-        private OpenFileDialog openFileDialog_Atlas;
         private ToolTip toolTip;
         private PropertyGrid propertyGrid_Skel;
         private SpineListView spineListView;

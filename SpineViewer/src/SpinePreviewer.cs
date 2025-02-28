@@ -21,10 +21,10 @@ namespace SpineViewer
             private readonly SFML.Graphics.RenderWindow RenderWindow;
             private readonly Control ContainerControl;
 
-            public PreviewerProperty(SFML.Graphics.RenderWindow renderWindow, Control containerControl)
+            public PreviewerProperty(SpinePreviewer previewer)
             {
-                RenderWindow = renderWindow;
-                ContainerControl = containerControl;
+                RenderWindow = previewer.RenderWindow;
+                ContainerControl = previewer;
             }
 
             /// <summary>
@@ -189,7 +189,7 @@ namespace SpineViewer
             RenderWindow = new(panel.Handle);
             RenderWindow.SetFramerateLimit(30);
             RenderWindow.SetActive(false);
-            Property = new(RenderWindow, this)
+            Property = new(this)
             {
                 Resolution = new(1280, 720),
                 Center = new(0, 0),
