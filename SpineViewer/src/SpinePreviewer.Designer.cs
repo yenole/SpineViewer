@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             panel = new Panel();
-            backgroundWorker = new System.ComponentModel.BackgroundWorker();
             SuspendLayout();
             // 
             // panel
@@ -44,11 +43,6 @@
             panel.MouseMove += panel_MouseMove;
             panel.MouseUp += panel_MouseUp;
             panel.MouseWheel += panel_MouseWheel;
-            // 
-            // backgroundWorker
-            // 
-            backgroundWorker.WorkerSupportsCancellation = true;
-            backgroundWorker.DoWork += backgroundWorker_DoWork;
             // 
             // SpinePreviewer
             // 
@@ -65,6 +59,5 @@
         #endregion
 
         private Panel panel;
-        private System.ComponentModel.BackgroundWorker backgroundWorker;
     }
 }

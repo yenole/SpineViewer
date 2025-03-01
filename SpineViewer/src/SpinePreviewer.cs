@@ -84,7 +84,7 @@ namespace SpineViewer
         private static readonly SFML.Graphics.Color AxisColor = SFML.Graphics.Color.Red;
 
         private readonly SFML.Graphics.RectangleShape BackgroundCell = new() { FillColor = new(220, 220, 220) };
-        private readonly SFML.Graphics.VertexArray XAxisVertex = new (SFML.Graphics.PrimitiveType.Lines, 2);
+        private readonly SFML.Graphics.VertexArray XAxisVertex = new(SFML.Graphics.PrimitiveType.Lines, 2);
         private readonly SFML.Graphics.VertexArray YAxisVertex = new(SFML.Graphics.PrimitiveType.Lines, 2);
 
         private readonly SFML.Graphics.RenderWindow RenderWindow;
@@ -92,25 +92,8 @@ namespace SpineViewer
         private SFML.System.Vector2f? draggingSrc = null;
         private Spine.Spine? draggingSpine = null;
 
-        /// <summary>
-        /// 安全获取 Spine 列表
-        /// </summary>
-        private Spine.Spine[] Spines
-        {
-            get
-            {
-                if (SpineListView is null)
-                    return [];
-
-                // 需要在控件线程拿到数组浅拷贝副本
-                Spine.Spine[] spines = null;
-                if (SpineListView.InvokeRequired)
-                    SpineListView.Invoke(() => spines = SpineListView.Spines.ToArray());
-                else
-                    spines = SpineListView.Spines.ToArray();
-                return spines;
-            }
-        }
+        private Task? task = null;
+        private CancellationTokenSource? cancelToken = null;
 
         public SpinePreviewer()
         {
@@ -273,8 +256,10 @@ namespace SpineViewer
         /// </summary>
         public void StartPreview()
         {
-            if (!backgroundWorker.IsBusy)
-                backgroundWorker.RunWorkerAsync();
+            if (task is not null)
+                return;
+            cancelToken = new();
+            task = Task.Run(RenderTask, cancelToken.Token);
         }
 
         /// <summary>
@@ -282,8 +267,12 @@ namespace SpineViewer
         /// </summary>
         public void StopPreview()
         {
-            if (backgroundWorker.IsBusy)
-                backgroundWorker.CancelAsync();
+            if (task is null || cancelToken is null)
+                return;
+            cancelToken.Cancel();
+            task.Wait();
+            cancelToken = null;
+            task = null;
         }
 
         private void SpinePreviewer_SizeChanged(object sender, EventArgs e)
@@ -328,12 +317,16 @@ namespace SpineViewer
             {
                 draggingSrc = RenderWindow.MapPixelToCoords(new(e.X, e.Y));
                 var src = new PointF(((SFML.System.Vector2f)draggingSrc).X, ((SFML.System.Vector2f)draggingSrc).Y);
-                foreach (var spine in Spines)
+
+                if (SpineListView is not null)
                 {
-                    if (spine.Bounds.Contains(src))
+                    foreach (var spine in SpineListView.Spines)
                     {
-                        draggingSpine = spine;
-                        break;
+                        if (spine.Bounds.Contains(src))
+                        {
+                            draggingSpine = spine;
+                            break;
+                        }
                     }
                 }
             }
@@ -434,35 +427,42 @@ namespace SpineViewer
             }
         }
 
-        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void RenderTask()
         {
-            RenderWindow.SetActive(true);
-            float delta;
-
-            while (!backgroundWorker.CancellationPending)
+            try
             {
-                delta = Clock.ElapsedTime.AsSeconds();
-                Clock.Restart();
+                RenderWindow.SetActive(true);
 
-                RenderWindow.Clear(BackgroundColor);
-
-                // 渲染背景网格
-                DrawBackground();
-
-
-                // 渲染 Spine
-                foreach (var spine in Spines.Reverse())
+                float delta;
+                while (cancelToken is not null && !cancelToken.IsCancellationRequested)
                 {
-                    spine.Update(delta);
-                    RenderWindow.Draw(spine);
+                    delta = Clock.ElapsedTime.AsSeconds();
+                    Clock.Restart();
+
+                    RenderWindow.Clear(BackgroundColor);
+
+                    // 渲染背景网格
+                    DrawBackground();
+
+                    // 渲染 Spine
+                    if (SpineListView is not null)
+                    {
+                        foreach (var spine in SpineListView.Spines.Reverse())
+                        {
+                            spine.Update(delta);
+                            RenderWindow.Draw(spine);
+                            // TODO: 渲染包围盒
+                        }
+                    }
+
+                    RenderWindow.Display();
                 }
-
-                RenderWindow.Display();
             }
-
-            RenderWindow.SetActive(false);
+            finally
+            {
+                RenderWindow.SetActive(false);
+            }
         }
-
     }
 
 }
