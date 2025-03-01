@@ -38,6 +38,7 @@
             toolStripSeparator2 = new ToolStripSeparator();
             toolStripMenuItem_Exit = new ToolStripMenuItem();
             toolStripMenuItem_Function = new ToolStripMenuItem();
+            toolStripMenuItem_ResetAnimation = new ToolStripMenuItem();
             toolStripMenuItem_Help = new ToolStripMenuItem();
             toolStripMenuItem_About = new ToolStripMenuItem();
             rtbLog = new RichTextBox();
@@ -55,7 +56,6 @@
             spinePreviewer = new SpinePreviewer();
             panel_MainForm = new Panel();
             toolTip = new ToolTip(components);
-            toolStripMenuItem_ResetAnimation = new ToolStripMenuItem();
             menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer_MainForm).BeginInit();
             splitContainer_MainForm.Panel1.SuspendLayout();
@@ -145,6 +145,13 @@
             toolStripMenuItem_Function.Name = "toolStripMenuItem_Function";
             toolStripMenuItem_Function.Size = new Size(84, 28);
             toolStripMenuItem_Function.Text = "功能(&F)";
+            // 
+            // toolStripMenuItem_ResetAnimation
+            // 
+            toolStripMenuItem_ResetAnimation.Name = "toolStripMenuItem_ResetAnimation";
+            toolStripMenuItem_ResetAnimation.Size = new Size(270, 34);
+            toolStripMenuItem_ResetAnimation.Text = "重置动画时间(&R)";
+            toolStripMenuItem_ResetAnimation.Click += toolStripMenuItem_ResetAnimation_Click;
             // 
             // toolStripMenuItem_Help
             // 
@@ -345,6 +352,7 @@
             // 
             // spinePreviewer
             // 
+            spinePreviewer.BackColor = SystemColors.ControlDark;
             spinePreviewer.Dock = DockStyle.Fill;
             spinePreviewer.Location = new Point(3, 26);
             spinePreviewer.Name = "spinePreviewer";
@@ -366,13 +374,6 @@
             // toolTip
             // 
             toolTip.ShowAlways = true;
-            // 
-            // toolStripMenuItem_ResetAnimation
-            // 
-            toolStripMenuItem_ResetAnimation.Name = "toolStripMenuItem_ResetAnimation";
-            toolStripMenuItem_ResetAnimation.Size = new Size(270, 34);
-            toolStripMenuItem_ResetAnimation.Text = "重置动画(&R)";
-            toolStripMenuItem_ResetAnimation.Click += toolStripMenuItem_ResetAnimation_Click;
             // 
             // MainForm
             // 
