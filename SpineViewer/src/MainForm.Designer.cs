@@ -47,7 +47,7 @@
             splitContainer_Information = new SplitContainer();
             groupBox_SkelList = new GroupBox();
             spineListView = new SpineListView();
-            propertyGrid_Skel = new PropertyGrid();
+            propertyGrid_Spine = new PropertyGrid();
             splitContainer_Config = new SplitContainer();
             groupBox_SkelConfig = new GroupBox();
             groupBox_PreviewConfig = new GroupBox();
@@ -149,7 +149,7 @@
             // toolStripMenuItem_ResetAnimation
             // 
             toolStripMenuItem_ResetAnimation.Name = "toolStripMenuItem_ResetAnimation";
-            toolStripMenuItem_ResetAnimation.Size = new Size(270, 34);
+            toolStripMenuItem_ResetAnimation.Size = new Size(242, 34);
             toolStripMenuItem_ResetAnimation.Text = "重置动画时间(&R)";
             toolStripMenuItem_ResetAnimation.Click += toolStripMenuItem_ResetAnimation_Click;
             // 
@@ -267,20 +267,20 @@
             spineListView.Dock = DockStyle.Fill;
             spineListView.Location = new Point(3, 26);
             spineListView.Name = "spineListView";
-            spineListView.PropertyGrid = propertyGrid_Skel;
+            spineListView.PropertyGrid = propertyGrid_Spine;
             spineListView.Size = new Size(340, 766);
             spineListView.TabIndex = 0;
             // 
-            // propertyGrid_Skel
+            // propertyGrid_Spine
             // 
-            propertyGrid_Skel.Dock = DockStyle.Fill;
-            propertyGrid_Skel.HelpVisible = false;
-            propertyGrid_Skel.Location = new Point(3, 26);
-            propertyGrid_Skel.Name = "propertyGrid_Skel";
-            propertyGrid_Skel.Size = new Size(369, 506);
-            propertyGrid_Skel.TabIndex = 0;
-            propertyGrid_Skel.ToolbarVisible = false;
-            propertyGrid_Skel.PropertyValueChanged += propertyGrid_PropertyValueChanged;
+            propertyGrid_Spine.Dock = DockStyle.Fill;
+            propertyGrid_Spine.HelpVisible = false;
+            propertyGrid_Spine.Location = new Point(3, 26);
+            propertyGrid_Spine.Name = "propertyGrid_Spine";
+            propertyGrid_Spine.Size = new Size(369, 506);
+            propertyGrid_Spine.TabIndex = 0;
+            propertyGrid_Spine.ToolbarVisible = false;
+            propertyGrid_Spine.PropertyValueChanged += propertyGrid_PropertyValueChanged;
             // 
             // splitContainer_Config
             // 
@@ -308,7 +308,7 @@
             // 
             // groupBox_SkelConfig
             // 
-            groupBox_SkelConfig.Controls.Add(propertyGrid_Skel);
+            groupBox_SkelConfig.Controls.Add(propertyGrid_Spine);
             groupBox_SkelConfig.Dock = DockStyle.Fill;
             groupBox_SkelConfig.Location = new Point(0, 0);
             groupBox_SkelConfig.Name = "groupBox_SkelConfig";
@@ -360,6 +360,7 @@
             spinePreviewer.Size = new Size(986, 766);
             spinePreviewer.SpineListView = spineListView;
             spinePreviewer.TabIndex = 0;
+            spinePreviewer.MouseUp += spinePreviewer_MouseUp;
             // 
             // panel_MainForm
             // 
@@ -387,6 +388,8 @@
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "SpineViewer";
+            FormClosing += MainForm_FormClosing;
+            Load += MainForm_Load;
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
             splitContainer_MainForm.Panel1.ResumeLayout(false);
@@ -437,7 +440,7 @@
         private ToolStripMenuItem toolStripMenuItem_BatchOpen;
         private GroupBox groupBox_Preview;
         private ToolTip toolTip;
-        private PropertyGrid propertyGrid_Skel;
+        private PropertyGrid propertyGrid_Spine;
         private SpineListView spineListView;
         private PropertyGrid propertyGrid_Previewer;
         private SpinePreviewer spinePreviewer;

@@ -11,7 +11,6 @@ namespace SpineViewer
         {
             InitializeComponent();
             InitializeLogConfiguration();
-            spinePreviewer.StartPreview();
         }
 
         /// <summary>
@@ -42,6 +41,16 @@ namespace SpineViewer
             LogManager.ReconfigExistingLoggers();
         }
 
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            spinePreviewer.StartPreview();
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            spinePreviewer.StopPreview();
+        }
+
         private void toolStripMenuItem_Open_Click(object sender, EventArgs e)
         {
             spineListView.Add();
@@ -59,7 +68,6 @@ namespace SpineViewer
             Program.Logger.Warn("Warn Test");
             Program.Logger.Error("Error Test");
             Program.Logger.Fatal("Fatal Test");
-            spinePreviewer.StopPreview();
         }
 
         private void toolStripMenuItem_Exit_Click(object sender, EventArgs e)
@@ -69,8 +77,10 @@ namespace SpineViewer
 
         private void toolStripMenuItem_ResetAnimation_Click(object sender, EventArgs e)
         {
+            spinePreviewer.StopPreview();
             foreach (var spine in spineListView.Spines)
                 spine.CurrentAnimation = spine.CurrentAnimation;
+            spinePreviewer.StartPreview();
         }
 
         private void splitContainer_SplitterMoved(object sender, SplitterEventArgs e)
@@ -88,5 +98,9 @@ namespace SpineViewer
             (sender as PropertyGrid)?.Refresh();
         }
 
+        private void spinePreviewer_MouseUp(object sender, MouseEventArgs e)
+        {
+            propertyGrid_Spine.Refresh();
+        }
     }
 }
