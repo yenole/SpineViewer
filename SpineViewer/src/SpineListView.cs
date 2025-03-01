@@ -20,11 +20,22 @@ namespace SpineViewer
         public PropertyGrid? PropertyGrid { get; set; }
 
         /// <summary>
-        /// Spine 列表
+        /// Spine 列表浅拷贝
         /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false)]
-        public ReadOnlyCollection<Spine.Spine> Spines { get => spines.AsReadOnly(); }
+        public Spine.Spine[] Spines 
+        { 
+            get
+            {
+                dataMutex.WaitOne();
+                var shallowCopy = spines.ToArray();
+                dataMutex.ReleaseMutex();
+                return shallowCopy;
+            }
+        }
         private readonly List<Spine.Spine> spines = [];
+        private readonly Mutex dataMutex = new();
 
         public SpineListView()
         {
@@ -312,7 +323,7 @@ namespace SpineViewer
             if (listView.Items.Count <= 0)
                 return;
 
-            if (MessageBox.Show($"确认移除所有 {listView.SelectedIndices.Count} 项吗？", "操作确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+            if (MessageBox.Show($"确认移除所有 {listView.Items.Count} 项吗？", "操作确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
             {
                 spines.Clear();
                 listView.Items.Clear();
