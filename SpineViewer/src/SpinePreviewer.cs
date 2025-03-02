@@ -320,12 +320,15 @@ namespace SpineViewer
 
                 if (SpineListView is not null)
                 {
-                    foreach (var spine in SpineListView.Spines)
+                    lock (SpineListView.Spines)
                     {
-                        if (spine.Bounds.Contains(src))
+                        foreach (var spine in SpineListView.Spines)
                         {
-                            draggingSpine = spine;
-                            break;
+                            if (spine.Bounds.Contains(src))
+                            {
+                                draggingSpine = spine;
+                                break;
+                            }
                         }
                     }
                 }
@@ -360,7 +363,6 @@ namespace SpineViewer
             if ((e.Button & MouseButtons.Right) != 0)
             {
                 draggingSpine = null;
-                SpineListView?.PropertyGrid?.Refresh(); // 面板刷新不能放在 Move 事件里, 会导致一直在 Move
 
                 draggingSrc = null;
                 Cursor = Cursors.Default;
@@ -371,7 +373,6 @@ namespace SpineViewer
             {
                 draggingSrc = null;
                 draggingSpine = null;
-                SpineListView?.PropertyGrid?.Refresh();
             }
         }
 
@@ -447,11 +448,14 @@ namespace SpineViewer
                     // 渲染 Spine
                     if (SpineListView is not null)
                     {
-                        foreach (var spine in SpineListView.Spines.Reverse())
+                        lock (SpineListView.Spines)
                         {
-                            spine.Update(delta);
-                            RenderWindow.Draw(spine);
-                            // TODO: 渲染包围盒
+                            foreach (var spine in SpineListView.Spines.Reverse())
+                            {
+                                spine.Update(delta);
+                                RenderWindow.Draw(spine);
+                                // TODO: 渲染包围盒
+                            }
                         }
                     }
 
