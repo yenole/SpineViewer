@@ -20,26 +20,19 @@ namespace SpineViewer
         public PropertyGrid? PropertyGrid { get; set; }
 
         /// <summary>
-        /// Spine 列表浅拷贝
+        /// 获取数组快照, 访问时必须使用 lock 语句锁定对象本身
         /// </summary>
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [Browsable(false)]
-        public Spine.Spine[] Spines 
-        { 
-            get
-            {
-                dataMutex.WaitOne();
-                var shallowCopy = spines.ToArray();
-                dataMutex.ReleaseMutex();
-                return shallowCopy;
-            }
-        }
+        public readonly ReadOnlyCollection<Spine.Spine> Spines;
+
+        /// <summary>
+        /// Spine 列表, 访问时必须使用 lock 语句锁定 Spines
+        /// </summary>
         private readonly List<Spine.Spine> spines = [];
-        private readonly Mutex dataMutex = new();
 
         public SpineListView()
         {
             InitializeComponent();
+            Spines = spines.AsReadOnly();
         }
 
         /// <summary>
@@ -47,10 +40,6 @@ namespace SpineViewer
         /// </summary>
         private void Insert(int index = -1)
         {
-            // 如果索引无效则在末尾添加
-            if (index < 0 || index > spines.Count)
-                index = spines.Count;
-
             var dialog = new OpenSpineDialog();
             if (dialog.ShowDialog() != DialogResult.OK)
                 return;
@@ -58,7 +47,13 @@ namespace SpineViewer
             try
             {
                 var spine = Spine.Spine.New(dialog.Version, dialog.SkelPath, dialog.AtlasPath);
-                spines.Insert(index, spine);
+
+                // 如果索引无效则在末尾添加
+                if (index < 0 || index > listView.Items.Count)
+                    index = listView.Items.Count;
+
+                // 锁定外部的读操作
+                lock (Spines) { spines.Insert(index, spine); }
                 listView.Items.Insert(index, new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath });
 
                 // 选中新增项
@@ -121,20 +116,8 @@ namespace SpineViewer
                 try
                 {
                     var spine = Spine.Spine.New(version, skelPath);
-                    // 对 spines 和 Items 的操作都要转到窗口线程操作
-                    if (listView.InvokeRequired)
-                    {
-                        listView.Invoke(() =>
-                        {
-                            spines.Add(spine);
-                            listView.Items.Add(new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath });
-                        });
-                    }
-                    else
-                    {
-                        spines.Add(spine);
-                        listView.Items.Add(new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath });
-                    }
+                    lock (Spines) { spines.Add(spine); }
+                    listView.Invoke(() => listView.Items.Add(new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath }));
                     success++;
                 }
                 catch (Exception ex)
@@ -159,13 +142,15 @@ namespace SpineViewer
         {
             if (PropertyGrid is not null)
             {
-
-                if (listView.SelectedIndices.Count <= 0)
-                    PropertyGrid.SelectedObject = null;
-                else if (listView.SelectedIndices.Count <= 1)
-                    PropertyGrid.SelectedObject = spines[listView.SelectedIndices[0]];
-                else
-                    PropertyGrid.SelectedObjects = listView.SelectedIndices.Cast<int>().Select(index => spines[index]).ToArray();
+                lock (Spines)
+                {
+                    if (listView.SelectedIndices.Count <= 0)
+                        PropertyGrid.SelectedObject = null;
+                    else if (listView.SelectedIndices.Count <= 1)
+                        PropertyGrid.SelectedObject = spines[listView.SelectedIndices[0]];
+                    else
+                        PropertyGrid.SelectedObjects = listView.SelectedIndices.Cast<int>().Select(index => spines[index]).ToArray();
+                }
             }
         }
 
@@ -212,23 +197,29 @@ namespace SpineViewer
             // 获取拖放源项和目标项
             var draggedItem = (ListViewItem)e.Data.GetData(typeof(ListViewItem));
             int draggedIndex = draggedItem.Index;
-            var draggedSpine = spines[draggedIndex];
-
             var point = listView.PointToClient(new Point(e.X, e.Y));
             var targetItem = listView.GetItemAt(point.X, point.Y);
             int targetIndex = targetItem is null ? listView.Items.Count : targetItem.Index;
 
             if (targetIndex <= draggedIndex)
             {
-                spines.RemoveAt(draggedIndex);
-                spines.Insert(targetIndex, draggedSpine);
+                lock (Spines)
+                {
+                    var draggedSpine = spines[draggedIndex];
+                    spines.RemoveAt(draggedIndex);
+                    spines.Insert(targetIndex, draggedSpine);
+                }
                 listView.Items.RemoveAt(draggedIndex);
                 listView.Items.Insert(targetIndex, draggedItem);
             }
             else
             {
-                spines.RemoveAt(draggedIndex);
-                spines.Insert(targetIndex - 1, draggedSpine);
+                lock (Spines)
+                {
+                    var draggedSpine = spines[draggedIndex];
+                    spines.RemoveAt(draggedIndex);
+                    spines.Insert(targetIndex - 1, draggedSpine);
+                }
                 listView.Items.RemoveAt(draggedIndex);
                 listView.Items.Insert(targetIndex - 1, draggedItem);
             }
@@ -275,18 +266,15 @@ namespace SpineViewer
             if (listView.SelectedIndices.Count > 1)
             {
                 if (MessageBox.Show($"确定移除所选 {listView.SelectedIndices.Count} 项吗？", "操作确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK)
-                {
                     return;
-                }
             }
 
             foreach (var i in listView.SelectedIndices.Cast<int>().OrderByDescending(x => x))
             {
-                spines.RemoveAt(i);
+                lock (Spines) { spines.RemoveAt(i); }
                 listView.Items.RemoveAt(i);
             }
         }
-
 
         private void toolStripMenuItem_MoveUp_Click(object sender, EventArgs e)
         {
@@ -296,7 +284,7 @@ namespace SpineViewer
             var index = listView.SelectedIndices[0];
             if (index > 0)
             {
-                (spines[index - 1], spines[index]) = (spines[index], spines[index - 1]);
+                lock (Spines) { (spines[index - 1], spines[index]) = (spines[index], spines[index - 1]); }
                 var item = listView.Items[index];
                 listView.Items.RemoveAt(index);
                 listView.Items.Insert(index - 1, item);
@@ -309,9 +297,9 @@ namespace SpineViewer
                 return;
 
             var index = listView.SelectedIndices[0];
-            if (index < spines.Count - 1)
+            if (index < listView.Items.Count - 1)
             {
-                (spines[index], spines[index + 1]) = (spines[index + 1], spines[index]);
+                lock (Spines) { (spines[index], spines[index + 1]) = (spines[index + 1], spines[index]); }
                 var item = listView.Items[index + 1];
                 listView.Items.RemoveAt(index + 1);
                 listView.Items.Insert(index, item);
@@ -325,7 +313,7 @@ namespace SpineViewer
 
             if (MessageBox.Show($"确认移除所有 {listView.Items.Count} 项吗？", "操作确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
             {
-                spines.Clear();
+                lock (Spines) { spines.Clear(); }
                 listView.Items.Clear();
                 if (PropertyGrid is not null)
                     PropertyGrid.SelectedObject = null;
