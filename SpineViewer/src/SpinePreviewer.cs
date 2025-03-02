@@ -24,40 +24,31 @@ namespace SpineViewer
 
             public PreviewerProperty(SpinePreviewer previewer) { this.previewer = previewer; }
 
-            /// <summary>
-            /// 导出画面分辨率
-            /// </summary>
             [TypeConverter(typeof(SizeTypeConverter))]
-            [Category("属性"), DisplayName("分辨率")]
+            [Category("导出"), DisplayName("分辨率")]
             public Size Resolution { get => previewer.Resolution; set => previewer.Resolution = value; }
 
             [TypeConverter(typeof(PointFTypeConverter))]
-            [Category("属性"), DisplayName("画面中心点")]
+            [Category("导出"), DisplayName("画面中心点")]
             public PointF Center { get => previewer.Center; set => previewer.Center = value; }
 
-            /// <summary>
-            /// 画面缩放
-            /// </summary>
-            [Category("属性"), DisplayName("缩放")]
+            [Category("导出"), DisplayName("缩放")]
             public float Zoom { get => previewer.Zoom; set => previewer.Zoom = value; }
 
-            /// <summary>
-            /// 画面旋转
-            /// </summary>
-            [Category("属性"), DisplayName("旋转")]
+            [Category("导出"), DisplayName("旋转")]
             public float Rotation { get => previewer.Rotation; set => previewer.Rotation = value; }
 
-            /// <summary>
-            /// 画面旋转
-            /// </summary>
-            [Category("属性"), DisplayName("水平翻转")]
+            [Category("导出"), DisplayName("水平翻转")]
             public bool FlipX { get => previewer.FlipX; set => previewer.FlipX = value; }
 
-            /// <summary>
-            /// 画面旋转
-            /// </summary>
-            [Category("属性"), DisplayName("垂直翻转")]
+            [Category("导出"), DisplayName("垂直翻转")]
             public bool FlipY { get => previewer.FlipY; set => previewer.FlipY = value; }
+
+            [Category("预览"), DisplayName("显示坐标轴")]
+            public bool ShowAxis { get => previewer.ShowAxis; set => previewer.ShowAxis = value; }
+
+            [Category("预览"), DisplayName("显示包围盒")]
+            public bool ShowBounds { get => previewer.ShowBounds; set => previewer.ShowBounds = value; }
         }
 
         [Category("自定义"), Description("相关联的 SpineListView")]
@@ -82,10 +73,12 @@ namespace SpineViewer
 
         private static readonly SFML.Graphics.Color BackgroundColor = SFML.Graphics.Color.White;
         private static readonly SFML.Graphics.Color AxisColor = SFML.Graphics.Color.Red;
+        private static readonly SFML.Graphics.Color BoundsColor = SFML.Graphics.Color.Blue;
 
         private readonly SFML.Graphics.RectangleShape BackgroundCell = new() { FillColor = new(220, 220, 220) };
         private readonly SFML.Graphics.VertexArray XAxisVertex = new(SFML.Graphics.PrimitiveType.Lines, 2);
         private readonly SFML.Graphics.VertexArray YAxisVertex = new(SFML.Graphics.PrimitiveType.Lines, 2);
+        private readonly SFML.Graphics.VertexArray BoundsRect = new(SFML.Graphics.PrimitiveType.LineStrip, 5);
 
         private readonly SFML.Graphics.RenderWindow RenderWindow;
         private readonly SFML.System.Clock Clock = new();
@@ -252,6 +245,20 @@ namespace SpineViewer
         }
 
         /// <summary>
+        /// 显示坐标轴
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false)]
+        public bool ShowAxis { get; set; } = true;
+
+        /// <summary>
+        /// 显示包围盒
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false)]
+        public bool ShowBounds { get; set; } = true;
+
+        /// <summary>
         /// 开始预览
         /// </summary>
         public void StartPreview()
@@ -410,21 +417,23 @@ namespace SpineViewer
                 hasOffset = !hasOffset;
             }
 
-            // 绘制坐标轴
-            var origin = RenderWindow.MapCoordsToPixel(new(0, 0));
-            var clientRect = panel.ClientRectangle;
-            if (origin.X > clientRect.Left && origin.X < clientRect.Right ||
-                origin.Y > clientRect.Top && origin.Y < clientRect.Bottom)
+            if (ShowAxis)
             {
-                var rightBottom = view.Center + size / 2;
-                XAxisVertex[0] = new(new(leftTop.X, 0), AxisColor);
-                XAxisVertex[1] = new(new(rightBottom.X, 0), AxisColor);
-                YAxisVertex[0] = new(new(0, leftTop.Y), AxisColor);
-                YAxisVertex[1] = new(new(0, rightBottom.Y), AxisColor);
+                var origin = RenderWindow.MapCoordsToPixel(new(0, 0));
+                var clientRect = panel.ClientRectangle;
+                if (origin.X > clientRect.Left && origin.X < clientRect.Right ||
+                    origin.Y > clientRect.Top && origin.Y < clientRect.Bottom)
+                {
+                    var rightBottom = view.Center + size / 2;
+                    XAxisVertex[0] = new(new(leftTop.X, 0), AxisColor);
+                    XAxisVertex[1] = new(new(rightBottom.X, 0), AxisColor);
+                    YAxisVertex[0] = new(new(0, leftTop.Y), AxisColor);
+                    YAxisVertex[1] = new(new(0, rightBottom.Y), AxisColor);
 
-                // 绘制坐标轴
-                RenderWindow.Draw(XAxisVertex);
-                RenderWindow.Draw(YAxisVertex);
+                    // 绘制坐标轴
+                    RenderWindow.Draw(XAxisVertex);
+                    RenderWindow.Draw(YAxisVertex);
+                }
             }
         }
 
@@ -454,7 +463,16 @@ namespace SpineViewer
                             {
                                 spine.Update(delta);
                                 RenderWindow.Draw(spine);
-                                // TODO: 渲染包围盒
+
+                                if (ShowBounds)
+                                {
+                                    var bounds = spine.Bounds;
+                                    BoundsRect[0] = BoundsRect[4] = new(new(bounds.Left, bounds.Top), BoundsColor);
+                                    BoundsRect[1] = new(new(bounds.Right, bounds.Top), BoundsColor);
+                                    BoundsRect[2] = new(new(bounds.Right, bounds.Bottom), BoundsColor);
+                                    BoundsRect[3] = new(new(bounds.Left, bounds.Bottom), BoundsColor);
+                                    RenderWindow.Draw(BoundsRect);
+                                }
                             }
                         }
                     }
