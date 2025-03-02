@@ -77,10 +77,11 @@ namespace SpineViewer
 
         private void toolStripMenuItem_ResetAnimation_Click(object sender, EventArgs e)
         {
-            spinePreviewer.StopPreview();
-            foreach (var spine in spineListView.Spines)
-                spine.CurrentAnimation = spine.CurrentAnimation;
-            spinePreviewer.StartPreview();
+            lock (spineListView.Spines)
+            {
+                foreach (var spine in spineListView.Spines)
+                    spine.CurrentAnimation = spine.CurrentAnimation;
+            }
         }
 
         private void splitContainer_SplitterMoved(object sender, SplitterEventArgs e)
