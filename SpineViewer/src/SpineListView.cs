@@ -87,16 +87,16 @@ namespace SpineViewer
 
             var progressDialog = new ProgressDialog();
             progressDialog.DoWork += BatchAdd_Work;
-            progressDialog.RunWorkerAsync(new { openDialog.SkelPaths, openDialog.Version });
+            progressDialog.RunWorkerAsync(openDialog);
             progressDialog.ShowDialog();
         }
 
         private void BatchAdd_Work(object? sender, DoWorkEventArgs e)
         {
             var worker = sender as BackgroundWorker;
-            var arguments = e.Argument as dynamic;
-            var skelPaths = arguments.SkelPaths as string[];
-            var version = (Spine.Version)arguments.Version;
+            var arguments = e.Argument as BatchOpenSpineDialog;
+            var skelPaths = arguments.SkelPaths;
+            var version = arguments.Version;
 
             int totalCount = skelPaths.Length;
             int success = 0;
