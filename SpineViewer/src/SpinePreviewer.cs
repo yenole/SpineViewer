@@ -97,11 +97,6 @@ namespace SpineViewer
             Resolution = new(2048, 2048);
             Center = new(0, 0);
             FlipY = true;
-
-            XAxisVertex[0] = new(new(0, 0), AxisColor);
-            XAxisVertex[1] = new(new(0, 0), AxisColor);
-            YAxisVertex[0] = new(new(0, 0), AxisColor);
-            YAxisVertex[1] = new(new(0, 0), AxisColor);
         }
 
         /// <summary>
