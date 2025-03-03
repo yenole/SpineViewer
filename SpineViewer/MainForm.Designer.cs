@@ -164,8 +164,9 @@
             // toolStripMenuItem_About
             // 
             toolStripMenuItem_About.Name = "toolStripMenuItem_About";
-            toolStripMenuItem_About.Size = new Size(171, 34);
+            toolStripMenuItem_About.Size = new Size(270, 34);
             toolStripMenuItem_About.Text = "关于(&A)";
+            toolStripMenuItem_About.Click += toolStripMenuItem_About_Click;
             // 
             // rtbLog
             // 

@@ -67,7 +67,7 @@ namespace SpineViewer
                     spine.CurrentAnimation = spine.CurrentAnimation;
 
                 Program.Logger.Info(
-                    "Begin exporting png frames to output dir {}, duration: {}, fps: {}, totally {} spines", 
+                    "Begin exporting png frames to output dir {}, duration: {}, fps: {}, totally {} spines",
                     [outputDir, duration, fps, spinesReverse.Count()]
                 );
 
@@ -81,7 +81,7 @@ namespace SpineViewer
 
                     tex.Clear(SFML.Graphics.Color.Transparent);
 
-                    foreach(var spine in spinesReverse)
+                    foreach (var spine in spinesReverse)
                     {
                         tex.Draw(spine);
                         spine.Update(delta);
@@ -90,7 +90,7 @@ namespace SpineViewer
                     tex.Display();
                     using (var img = tex.Texture.CopyToImage())
                     {
-                        img.SaveToFile(Path.Combine(outputDir, $"{timestamp}_{fps}_{frameIndex:d6}.png")); 
+                        img.SaveToFile(Path.Combine(outputDir, $"{timestamp}_{fps}_{frameIndex:d6}.png"));
                     }
 
                     success++;
@@ -156,6 +156,11 @@ namespace SpineViewer
                 foreach (var spine in spineListView.Spines)
                     spine.CurrentAnimation = spine.CurrentAnimation;
             }
+        }
+
+        private void toolStripMenuItem_About_Click(object sender, EventArgs e)
+        {
+            (new Dialogs.AboutDialog()).ShowDialog();
         }
 
         private void splitContainer_SplitterMoved(object sender, SplitterEventArgs e)
