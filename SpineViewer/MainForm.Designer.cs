@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             menuStrip = new MenuStrip();
             toolStripMenuItem_File = new ToolStripMenuItem();
             toolStripMenuItem_Open = new ToolStripMenuItem();
@@ -383,6 +384,7 @@
             ClientSize = new Size(1741, 1005);
             Controls.Add(panel_MainForm);
             Controls.Add(menuStrip);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MainMenuStrip = menuStrip;
             Margin = new Padding(3, 2, 3, 2);
             Name = "MainForm";
