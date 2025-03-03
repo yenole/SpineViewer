@@ -112,7 +112,6 @@ namespace SpineViewer.Controls
 
                 var skelPath = skelPaths[i];
 
-                worker.ReportProgress((int)((i + 1) * 100.0) / totalCount, $"正在处理 {i + 1}/{totalCount}");
                 try
                 {
                     var spine = Spine.Spine.New(version, skelPath);
@@ -126,6 +125,8 @@ namespace SpineViewer.Controls
                     Program.Logger.Error("Failed to load {}", skelPath);
                     error++;
                 }
+
+                worker.ReportProgress((int)((i + 1) * 100.0) / totalCount, $"已处理 {i + 1}/{totalCount}");
             }
 
             if (error > 0)
@@ -271,7 +272,11 @@ namespace SpineViewer.Controls
 
             foreach (var i in listView.SelectedIndices.Cast<int>().OrderByDescending(x => x))
             {
-                lock (Spines) { spines.RemoveAt(i); }
+                lock (Spines)
+                {
+                    spines[i].Dispose();
+                    spines.RemoveAt(i);
+                }
                 listView.Items.RemoveAt(i);
             }
         }
@@ -311,14 +316,18 @@ namespace SpineViewer.Controls
             if (listView.Items.Count <= 0)
                 return;
 
-            if (MessageBox.Show($"确认移除所有 {listView.Items.Count} 项吗？", "操作确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
-            {
-                lock (Spines) { spines.Clear(); }
-                listView.Items.Clear();
-                if (PropertyGrid is not null)
-                    PropertyGrid.SelectedObject = null;
-            }
-        }
+            if (MessageBox.Show($"确认移除所有 {listView.Items.Count} 项吗？", "操作确认", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK)
+                return;
 
+            lock (Spines) 
+            {
+                foreach (var spine in spines)
+                    spine.Dispose();
+                spines.Clear(); 
+            }
+            listView.Items.Clear();
+            if (PropertyGrid is not null)
+                PropertyGrid.SelectedObject = null;
+        }
     }
 }
