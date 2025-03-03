@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BatchOpenSpineDialog));
             panel = new Panel();
             tableLayoutPanel1 = new TableLayoutPanel();
             label4 = new Label();
@@ -205,10 +206,10 @@
             ClientSize = new Size(1126, 449);
             Controls.Add(panel);
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "BatchOpenSpineDialog";
-            ShowIcon = false;
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "批量打开骨骼";

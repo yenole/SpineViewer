@@ -27,6 +27,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutDialog));
             tableLayoutPanel_About = new TableLayoutPanel();
             label3 = new Label();
             label1 = new Label();
@@ -123,12 +124,12 @@
             ClientSize = new Size(736, 313);
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(6);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "AboutDialog";
             Padding = new Padding(16, 17, 16, 17);
-            ShowIcon = false;
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "关于 SpineViewer";
