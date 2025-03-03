@@ -162,7 +162,7 @@ namespace SpineViewer.Spine.Implementations
         public override string CurrentAnimation
         {
             get => animationState.GetCurrent(0)?.Animation.Name ?? DefaultAnimationName;
-            set { if (animationNames.Contains(value)) animationState.SetAnimation(0, value, true); }
+            set { if (animationNames.Contains(value)) { animationState.SetAnimation(0, value, true); Update(0); } }
         }
 
         public override RectangleF Bounds
