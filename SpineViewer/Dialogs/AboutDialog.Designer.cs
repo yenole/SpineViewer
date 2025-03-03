@@ -131,7 +131,7 @@
             ShowIcon = false;
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterParent;
-            Text = "关于";
+            Text = "关于 SpineViewer";
             tableLayoutPanel_About.ResumeLayout(false);
             tableLayoutPanel_About.PerformLayout();
             panel1.ResumeLayout(false);
