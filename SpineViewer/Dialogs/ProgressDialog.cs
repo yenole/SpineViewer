@@ -38,7 +38,7 @@ namespace SpineViewer.Dialogs
             if (e.Error != null)
             {
                 Program.Logger.Error(e.Error.ToString());
-                MessageBox.Show(e.Error.Message, "执行出错", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(e.Error.ToString(), "执行出错", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 DialogResult = DialogResult.Abort;
             }
             else if (e.Cancelled)
