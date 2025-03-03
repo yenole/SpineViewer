@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace SpineViewer
+namespace SpineViewer.Dialogs
 {
     public partial class OpenSpineDialog : Form
     {

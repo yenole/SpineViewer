@@ -1,4 +1,4 @@
-﻿namespace SpineViewer
+﻿namespace SpineViewer.Controls
 {
     partial class SpineListView
     {

@@ -1,4 +1,4 @@
-﻿namespace SpineViewer
+﻿namespace SpineViewer.Dialogs
 {
     partial class ProgressDialog
     {

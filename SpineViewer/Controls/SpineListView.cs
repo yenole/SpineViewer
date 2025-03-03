@@ -12,7 +12,7 @@ using SpineViewer.Spine;
 using System.Reflection;
 using System.Diagnostics;
 
-namespace SpineViewer
+namespace SpineViewer.Controls
 {
     public partial class SpineListView : UserControl
     {
@@ -40,7 +40,7 @@ namespace SpineViewer
         /// </summary>
         private void Insert(int index = -1)
         {
-            var dialog = new OpenSpineDialog();
+            var dialog = new Dialogs.OpenSpineDialog();
             if (dialog.ShowDialog() != DialogResult.OK)
                 return;
 
@@ -81,11 +81,11 @@ namespace SpineViewer
         /// </summary>
         public void BatchAdd()
         {
-            var openDialog = new BatchOpenSpineDialog();
+            var openDialog = new Dialogs.BatchOpenSpineDialog();
             if (openDialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            var progressDialog = new ProgressDialog();
+            var progressDialog = new Dialogs.ProgressDialog();
             progressDialog.DoWork += BatchAdd_Work;
             progressDialog.RunWorkerAsync(openDialog);
             progressDialog.ShowDialog();
@@ -94,7 +94,7 @@ namespace SpineViewer
         private void BatchAdd_Work(object? sender, DoWorkEventArgs e)
         {
             var worker = sender as BackgroundWorker;
-            var arguments = e.Argument as BatchOpenSpineDialog;
+            var arguments = e.Argument as Dialogs.BatchOpenSpineDialog;
             var skelPaths = arguments.SkelPaths;
             var version = arguments.Version;
 

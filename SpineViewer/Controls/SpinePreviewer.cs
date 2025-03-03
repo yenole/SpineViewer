@@ -11,7 +11,7 @@ using System.Security.Policy;
 using System.Diagnostics;
 using NLog.Targets;
 
-namespace SpineViewer
+namespace SpineViewer.Controls
 {
     public partial class SpinePreviewer : UserControl
     {
