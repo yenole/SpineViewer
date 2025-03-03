@@ -10,7 +10,12 @@
         <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
         <Version>0.9.0</Version>
         <BaseOutputPath>$(SolutionDir)out</BaseOutputPath>
+        <ApplicationIcon>appicon.ico</ApplicationIcon>
     </PropertyGroup>
+
+    <ItemGroup>
+      <Content Include="appicon.ico" />
+    </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="NLog.Windows.Forms" Version="5.2.3" />
