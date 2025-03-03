@@ -29,7 +29,7 @@
 
 using System;
 
-namespace SpineRuntime38 {
+namespace SpineRuntime38.Attachments {
 	/// <summary>Attachment that displays a texture region using a mesh.</summary>
 	public class MeshAttachment : VertexAttachment, IHasRendererObject {
 		internal float regionOffsetX, regionOffsetY, regionWidth, regionHeight, regionOriginalWidth, regionOriginalHeight;
@@ -41,8 +41,8 @@ namespace SpineRuntime38 {
 
 		public int HullLength { get { return hulllength; } set { hulllength = value; } }
 		public float[] RegionUVs { get { return regionUVs; } set { regionUVs = value; } }
-		/// <summary>The UV pair for each vertex, normalized within the entire texture. <seealso cref="MeshAttachment.UpdateUVs"/></summary>
-		public float[] UVs { get { return uvs; } set { uvs = value; } }
+        /// <summary>The UV pair for each vertex, normalized within the entire texture. <seealso cref="UpdateUVs"/></summary>
+        public float[] UVs { get { return uvs; } set { uvs = value; } }
 		public int[] Triangles { get { return triangles; } set { triangles = value; } }
 
 		public float R { get { return r; } set { r = value; } }
@@ -99,8 +99,8 @@ namespace SpineRuntime38 {
 			float u = RegionU, v = RegionV, width = 0, height = 0;
 
 			if (RegionDegrees == 90) {
-				float textureHeight = this.regionWidth / (RegionV2 - RegionV);
-				float textureWidth = this.regionHeight / (RegionU2 - RegionU);
+				float textureHeight = regionWidth / (RegionV2 - RegionV);
+				float textureWidth = regionHeight / (RegionU2 - RegionU);
 				u -= (RegionOriginalHeight - RegionOffsetY - RegionHeight) / textureWidth;
 				v -= (RegionOriginalWidth - RegionOffsetX - RegionWidth) / textureHeight;
 				width = RegionOriginalHeight / textureWidth;
@@ -111,8 +111,8 @@ namespace SpineRuntime38 {
 					uvs[i + 1] = v + (1 - regionUVs[i]) * height;
 				}
 			} else if (RegionDegrees == 180) {
-				float textureWidth = this.regionWidth / (RegionU2 - RegionU);
-				float textureHeight = this.regionHeight / (RegionV2 - RegionV);
+				float textureWidth = regionWidth / (RegionU2 - RegionU);
+				float textureHeight = regionHeight / (RegionV2 - RegionV);
 				u -= (RegionOriginalWidth - RegionOffsetX - RegionWidth) / textureWidth;
 				v -= RegionOffsetY / textureHeight;
 				width = RegionOriginalWidth / textureWidth;
@@ -123,8 +123,8 @@ namespace SpineRuntime38 {
 					uvs[i + 1] = v + (1 - regionUVs[i + 1]) * height;
 				}
 			} else if (RegionDegrees == 270) {
-				float textureWidth = this.regionWidth / (RegionU2 - RegionU);
-				float textureHeight = this.regionHeight / (RegionV2 - RegionV);
+				float textureWidth = regionWidth / (RegionU2 - RegionU);
+				float textureHeight = regionHeight / (RegionV2 - RegionV);
 				u -= RegionOffsetY / textureWidth;
 				v -= RegionOffsetX / textureHeight;
 				width = RegionOriginalHeight / textureWidth;
@@ -135,8 +135,8 @@ namespace SpineRuntime38 {
 					uvs[i + 1] = v + regionUVs[i] * height;
 				}
 			} else {
-				float textureWidth = this.regionWidth / (RegionU2 - RegionU);
-				float textureHeight = this.regionHeight / (RegionV2 - RegionV);
+				float textureWidth = regionWidth / (RegionU2 - RegionU);
+				float textureHeight = regionHeight / (RegionV2 - RegionV);
 				u -= RegionOffsetX / textureWidth;
 				v -= (RegionOriginalHeight - RegionOffsetY - RegionHeight) / textureHeight;
 				width = RegionOriginalWidth / textureWidth;
@@ -152,7 +152,7 @@ namespace SpineRuntime38 {
 		public override Attachment Copy () {
 			if (parentMesh != null) return NewLinkedMesh();
 
-			MeshAttachment copy = new MeshAttachment(this.Name);
+			MeshAttachment copy = new MeshAttachment(Name);
 			copy.RendererObject = RendererObject;
 			copy.regionOffsetX = regionOffsetX;
 			copy.regionOffsetY = regionOffsetY;

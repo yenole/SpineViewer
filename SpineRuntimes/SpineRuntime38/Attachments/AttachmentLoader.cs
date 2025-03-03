@@ -27,26 +27,22 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-using System;
+namespace SpineRuntime38.Attachments {
+	public interface AttachmentLoader {
+		/// <return>May be null to not load any attachment.</return>
+		RegionAttachment NewRegionAttachment (Skin skin, string name, string path);
 
-namespace SpineRuntime38 {
-	abstract public class Attachment {
-		public string Name { get; private set; }
+		/// <return>May be null to not load any attachment.</return>
+		MeshAttachment NewMeshAttachment (Skin skin, string name, string path);
 
-		protected Attachment (string name) {
-			if (name == null) throw new ArgumentNullException("name", "name cannot be null");
-			Name = name;
-		}
+		/// <return>May be null to not load any attachment.</return>
+		BoundingBoxAttachment NewBoundingBoxAttachment (Skin skin, string name);
 
-		override public string ToString () {
-			return Name;
-		}
+		/// <returns>May be null to not load any attachment</returns>
+		PathAttachment NewPathAttachment (Skin skin, string name);
 
-		///<summary>Returns a copy of the attachment.</summary>
-		public abstract Attachment Copy ();
-	}
+		PointAttachment NewPointAttachment (Skin skin, string name);
 
-	public interface IHasRendererObject {
-		object RendererObject { get; set; }
+		ClippingAttachment NewClippingAttachment (Skin skin, string name);
 	}
 }

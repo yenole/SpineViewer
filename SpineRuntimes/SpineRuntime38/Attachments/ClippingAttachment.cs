@@ -29,7 +29,7 @@
 
 using System;
 
-namespace SpineRuntime38 {
+namespace SpineRuntime38.Attachments {
 	public class ClippingAttachment : VertexAttachment {
 		internal SlotData endSlot;
 
@@ -39,7 +39,7 @@ namespace SpineRuntime38 {
 		}
 
 		public override Attachment Copy () {
-			ClippingAttachment copy = new ClippingAttachment(this.Name);
+			ClippingAttachment copy = new ClippingAttachment(Name);
 			CopyTo(copy);
 			copy.endSlot = endSlot;
 			return copy;

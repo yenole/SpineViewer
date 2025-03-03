@@ -27,6 +27,7 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
+using SpineRuntime38.Attachments;
 using System;
 
 namespace SpineRuntime38 {

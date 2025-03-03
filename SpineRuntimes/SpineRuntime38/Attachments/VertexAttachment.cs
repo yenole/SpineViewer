@@ -29,12 +29,12 @@
 
 using System;
 
-namespace SpineRuntime38 {
+namespace SpineRuntime38.Attachments {
 	/// <summary>>An attachment with vertices that are transformed by one or more bones and can be deformed by a slot's
 	/// <see cref="Slot.Deform"/>.</summary>
 	public abstract class VertexAttachment : Attachment {
 		static int nextID = 0;
-		static readonly Object nextIdLock = new Object();
+		static readonly object nextIdLock = new object();
 
 		internal readonly int id;
 		internal int[] bones;
@@ -55,8 +55,8 @@ namespace SpineRuntime38 {
 			: base(name) {
 
 			deformAttachment = this;
-			lock (VertexAttachment.nextIdLock) {
-				id = (VertexAttachment.nextID++ & 65535) << 11;
+			lock (nextIdLock) {
+				id = (nextID++ & 65535) << 11;
 			}
 		}
 

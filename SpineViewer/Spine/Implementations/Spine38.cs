@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SpineRuntime38;
+using SpineRuntime38.Attachments;
 using SpineViewer.Spine;
 
 namespace SpineViewer.Spine.Implementations

@@ -27,19 +27,8 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-using System;
-
-namespace SpineRuntime38 {
-	/// <summary>Attachment that has a polygon for bounds checking.</summary>
-	public class BoundingBoxAttachment : VertexAttachment {
-		public BoundingBoxAttachment (string name)
-			: base(name) {
-		}
-
-		public override Attachment Copy () {
-			BoundingBoxAttachment copy = new BoundingBoxAttachment(this.Name);
-			CopyTo(copy);
-			return copy;
-		}
+namespace SpineRuntime38.Attachments {
+	public enum AttachmentType {
+		Region, Boundingbox, Mesh, Linkedmesh, Path, Point, Clipping
 	}
 }

@@ -29,7 +29,7 @@
 
 using System;
 
-namespace SpineRuntime38 {
+namespace SpineRuntime38.Attachments {
 	/// <summary>Attachment that displays a texture region.</summary>
 	public class RegionAttachment : Attachment, IHasRendererObject {
 		public const int BLX = 0;
@@ -180,7 +180,7 @@ namespace SpineRuntime38 {
 		}
 
 		public override Attachment Copy () {
-			RegionAttachment copy = new RegionAttachment(this.Name);
+			RegionAttachment copy = new RegionAttachment(Name);
 			copy.RendererObject = RendererObject;
 			copy.regionOffsetX = regionOffsetX;
 			copy.regionOffsetY = regionOffsetY;

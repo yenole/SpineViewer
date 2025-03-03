@@ -27,8 +27,31 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-namespace SpineRuntime38 {
-	public enum AttachmentType {
-		Region, Boundingbox, Mesh, Linkedmesh, Path, Point, Clipping
+using System;
+using System.Collections.Generic;
+
+namespace SpineRuntime38.Attachments {
+	public class PathAttachment : VertexAttachment {
+		internal float[] lengths;
+		internal bool closed, constantSpeed;
+
+		/// <summary>The length in the setup pose from the start of the path to the end of each curve.</summary>
+		public float[] Lengths { get { return lengths; } set { lengths = value; } }
+		public bool Closed { get { return closed; } set { closed = value; } }
+		public bool ConstantSpeed { get { return constantSpeed; } set { constantSpeed = value; } }
+
+		public PathAttachment (string name)
+			: base(name) {
+		}
+
+		public override Attachment Copy () {
+			PathAttachment copy = new PathAttachment(Name);
+			CopyTo(copy);
+			copy.lengths = new float[lengths.Length];
+			Array.Copy(lengths, 0, copy.lengths, 0, lengths.Length);
+			copy.closed = closed;
+			copy.constantSpeed = constantSpeed;
+			return copy;
+		}
 	}
 }

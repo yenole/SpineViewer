@@ -29,7 +29,7 @@
 
 using System;
 
-namespace SpineRuntime38 {
+namespace SpineRuntime38.Attachments {
 
 	/// <summary>
 	/// An AttachmentLoader that configures attachments using texture regions from an Atlas.

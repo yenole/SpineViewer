@@ -41,6 +41,11 @@ namespace SpineViewer
             LogManager.ReconfigExistingLoggers();
         }
 
+        private void ExportPng_Work(object? sender, DoWorkEventArgs e)
+        {
+
+        }
+
         private void MainForm_Load(object sender, EventArgs e)
         {
             spinePreviewer.StartPreview();
@@ -63,11 +68,23 @@ namespace SpineViewer
 
         private void toolStripMenuItem_Export_Click(object sender, EventArgs e)
         {
-            Program.Logger.Debug("Debug Test");
-            Program.Logger.Info("Info Test");
-            Program.Logger.Warn("Warn Test");
-            Program.Logger.Error("Error Test");
-            Program.Logger.Fatal("Fatal Test");
+            lock (spineListView.Spines)
+            {
+                if (spineListView.Spines.Count <= 0)
+                {
+                    MessageBox.Show("请至少打开一个骨骼文件", "提示信息", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+            }
+
+            //var openDialog = new BatchOpenSpineDialog();
+            //if (openDialog.ShowDialog() != DialogResult.OK)
+            //    return;
+
+            //var progressDialog = new ProgressDialog();
+            //progressDialog.DoWork += ExportPng_Work;
+            //progressDialog.RunWorkerAsync(new { openDialog.SkelPaths, openDialog.Version });
+            //progressDialog.ShowDialog();
         }
 
         private void toolStripMenuItem_Exit_Click(object sender, EventArgs e)

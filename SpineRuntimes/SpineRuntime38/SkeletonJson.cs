@@ -34,6 +34,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using SpineRuntime38.Attachments;
 
 #if WINDOWS_STOREAPP
 using System.Threading.Tasks;
