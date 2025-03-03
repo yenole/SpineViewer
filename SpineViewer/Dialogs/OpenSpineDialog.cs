@@ -54,6 +54,10 @@ namespace SpineViewer.Dialogs
                 MessageBox.Show($"{skelPath}", "skel文件不存在", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
+            else
+            {
+                skelPath = Path.GetFullPath(skelPath);
+            }
 
             if (string.IsNullOrEmpty(atlasPath))
             {
@@ -63,6 +67,10 @@ namespace SpineViewer.Dialogs
             {
                 MessageBox.Show($"{atlasPath}", "atlas文件不存在", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
+            }
+            else
+            {
+                atlasPath = Path.GetFullPath(atlasPath);
             }
 
             SkelPath = skelPath;
