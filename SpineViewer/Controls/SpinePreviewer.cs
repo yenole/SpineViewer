@@ -251,6 +251,13 @@ namespace SpineViewer.Controls
         public uint MaxFps { get => maxFps; set { RenderWindow.SetFramerateLimit(value); maxFps = value; } }
         private uint maxFps = 60;
 
+        /// <summary>
+        /// RenderWindow.View
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false)]
+        public SFML.Graphics.View View { get => RenderWindow.GetView(); }
+
         public SpinePreviewer()
         {
             InitializeComponent();
