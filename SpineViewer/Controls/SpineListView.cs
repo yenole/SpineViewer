@@ -102,6 +102,7 @@ namespace SpineViewer.Controls
             int success = 0;
             int error = 0;
 
+            worker.ReportProgress(0, $"已处理 0/{totalCount}");
             for (int i = 0; i < totalCount; i++)
             {
                 if (worker.CancellationPending)
