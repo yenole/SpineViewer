@@ -1,9 +1,11 @@
 using NLog;
+using System.Diagnostics;
 
 namespace SpineViewer
 {
     internal static class Program
     {
+        public static readonly Process Process = Process.GetCurrentProcess();
         public static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>

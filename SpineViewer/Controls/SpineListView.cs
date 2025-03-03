@@ -66,6 +66,8 @@ namespace SpineViewer.Controls
                 Program.Logger.Error("Failed to load {} {}", dialog.SkelPath, dialog.AtlasPath);
                 MessageBox.Show(ex.ToString(), "骨骼加载失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            Program.Logger.Info($"Current memory usage: {Program.Process.WorkingSet64:N0} Bytes");
         }
 
         /// <summary>
@@ -138,6 +140,8 @@ namespace SpineViewer.Controls
             {
                 Program.Logger.Info("{} skel loaded successfully", success);
             }
+
+            Program.Logger.Info($"Current memory usage: {Program.Process.WorkingSet64:N0} Bytes");
         }
 
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
