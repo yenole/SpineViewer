@@ -95,7 +95,7 @@
             label_Tip.Name = "label_Tip";
             label_Tip.Size = new Size(552, 34);
             label_Tip.TabIndex = 10;
-            label_Tip.Text = "正在处理 34/100";
+            label_Tip.Text = "初始化...";
             // 
             // backgroundWorker
             // 
