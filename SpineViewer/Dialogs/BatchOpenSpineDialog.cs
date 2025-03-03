@@ -40,7 +40,7 @@ namespace SpineViewer.Dialogs
         {
             if (listBox_FilePath.Items.Count <= 0)
             {
-                MessageBox.Show("未选择任何文件", "错误提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("未选择任何文件", "错误信息", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
