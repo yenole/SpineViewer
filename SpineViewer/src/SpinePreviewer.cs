@@ -49,6 +49,9 @@ namespace SpineViewer
 
             [Category("预览"), DisplayName("显示包围盒")]
             public bool ShowBounds { get => previewer.ShowBounds; set => previewer.ShowBounds = value; }
+
+            [Category("预览"), DisplayName("最大帧率")]
+            public uint MaxFps { get => previewer.MaxFps; set => previewer.MaxFps = value; }
         }
 
         [Category("自定义"), Description("相关联的 SpineListView")]
@@ -71,13 +74,11 @@ namespace SpineViewer
         public const float ZOOM_MIN = 0.001f;
         public const int BACKGROUND_CELL_SIZE = 10;
 
-        private static readonly SFML.Graphics.Color BackgroundColor = SFML.Graphics.Color.White;
-        private static readonly SFML.Graphics.Color AxisColor = SFML.Graphics.Color.Red;
-        private static readonly SFML.Graphics.Color BoundsColor = SFML.Graphics.Color.Blue;
+        private static readonly SFML.Graphics.Color BackgroundColor = new(105, 105, 105);
+        private static readonly SFML.Graphics.Color AxisColor = new(220, 220, 220);
+        private static readonly SFML.Graphics.Color BoundsColor = new(120, 200, 0);
 
-        private readonly SFML.Graphics.RectangleShape BackgroundCell = new() { FillColor = new(220, 220, 220) };
-        private readonly SFML.Graphics.VertexArray XAxisVertex = new(SFML.Graphics.PrimitiveType.Lines, 2);
-        private readonly SFML.Graphics.VertexArray YAxisVertex = new(SFML.Graphics.PrimitiveType.Lines, 2);
+        private readonly SFML.Graphics.VertexArray AxisVertex = new(SFML.Graphics.PrimitiveType.Lines, 2);
         private readonly SFML.Graphics.VertexArray BoundsRect = new(SFML.Graphics.PrimitiveType.LineStrip, 5);
 
         private readonly SFML.Graphics.RenderWindow RenderWindow;
@@ -87,17 +88,6 @@ namespace SpineViewer
 
         private Task? task = null;
         private CancellationTokenSource? cancelToken = null;
-
-        public SpinePreviewer()
-        {
-            InitializeComponent();
-            RenderWindow = new(panel.Handle);
-            RenderWindow.SetFramerateLimit(30);
-            RenderWindow.SetActive(false);
-            Resolution = new(2048, 2048);
-            Center = new(0, 0);
-            FlipY = true;
-        }
 
         /// <summary>
         /// 分辨率
@@ -254,6 +244,27 @@ namespace SpineViewer
         public bool ShowBounds { get; set; } = true;
 
         /// <summary>
+        /// 最大帧率
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false)]
+        public uint MaxFps { get => maxFps; set { RenderWindow.SetFramerateLimit(value); maxFps = value; } }
+        private uint maxFps = 60;
+
+        public SpinePreviewer()
+        {
+            InitializeComponent();
+            RenderWindow = new(panel.Handle);
+            RenderWindow.SetActive(false);
+
+            // 设置默认参数
+            Resolution = new(2048, 2048);
+            Center = new(0, 0);
+            FlipY = true;
+            MaxFps = 30;
+        }
+
+        /// <summary>
         /// 开始预览
         /// </summary>
         public void StartPreview()
@@ -365,6 +376,7 @@ namespace SpineViewer
             if ((e.Button & MouseButtons.Right) != 0)
             {
                 draggingSpine = null;
+                SpineListView?.PropertyGrid?.Refresh();
 
                 draggingSrc = null;
                 Cursor = Cursors.Default;
@@ -375,6 +387,7 @@ namespace SpineViewer
             {
                 draggingSrc = null;
                 draggingSpine = null;
+                SpineListView?.PropertyGrid?.Refresh();
             }
         }
 
@@ -382,54 +395,6 @@ namespace SpineViewer
         {
             Zoom *= (e.Delta > 0 ? 1.1f : 0.9f);
             PropertyGrid?.Refresh();
-        }
-
-        private void DrawBackground()
-        {
-            // 绘制网格背景
-            var P = RenderWindow.MapPixelToCoords(new(0, 0));
-            var Q = RenderWindow.MapPixelToCoords(new(BACKGROUND_CELL_SIZE, BACKGROUND_CELL_SIZE));
-            var step = Q - P;
-            BackgroundCell.Size = step;
-
-            var view = RenderWindow.GetView();
-            var size = view.Size;
-            var leftTop = view.Center - size / 2;
-
-            var xCount = (int)Math.Ceiling(size.X / step.X);
-            var yCount = (int)Math.Ceiling(size.Y / step.Y);
-
-            bool hasOffset = false;
-            var x = leftTop.X;
-            for (int i = 0; i < xCount; i++, x += step.X)
-            {
-                var y = leftTop.Y + (hasOffset ? step.Y : 0);
-                for (int j = 0; j < yCount; j++, y += step.Y * 2)
-                {
-                    BackgroundCell.Position = new(x, y);
-                    RenderWindow.Draw(BackgroundCell);
-                }
-                hasOffset = !hasOffset;
-            }
-
-            if (ShowAxis)
-            {
-                var origin = RenderWindow.MapCoordsToPixel(new(0, 0));
-                var clientRect = panel.ClientRectangle;
-                if (origin.X > clientRect.Left && origin.X < clientRect.Right ||
-                    origin.Y > clientRect.Top && origin.Y < clientRect.Bottom)
-                {
-                    var rightBottom = view.Center + size / 2;
-                    XAxisVertex[0] = new(new(leftTop.X, 0), AxisColor);
-                    XAxisVertex[1] = new(new(rightBottom.X, 0), AxisColor);
-                    YAxisVertex[0] = new(new(0, leftTop.Y), AxisColor);
-                    YAxisVertex[1] = new(new(0, rightBottom.Y), AxisColor);
-
-                    // 绘制坐标轴
-                    RenderWindow.Draw(XAxisVertex);
-                    RenderWindow.Draw(YAxisVertex);
-                }
-            }
         }
 
         private void RenderTask()
@@ -446,8 +411,16 @@ namespace SpineViewer
 
                     RenderWindow.Clear(BackgroundColor);
 
-                    // 渲染背景网格
-                    DrawBackground();
+                    if (ShowAxis)
+                    {
+                        // 画一个很长的坐标轴, 用 1e9 比较合适
+                        AxisVertex[0] = new(new(-1e9f, 0), AxisColor);
+                        AxisVertex[1] = new(new(1e9f, 0), AxisColor);
+                        RenderWindow.Draw(AxisVertex);
+                        AxisVertex[0] = new(new(0, -1e9f), AxisColor);
+                        AxisVertex[1] = new(new(0, 1e9f), AxisColor);
+                        RenderWindow.Draw(AxisVertex);
+                    }
 
                     // 渲染 Spine
                     if (SpineListView is not null)
