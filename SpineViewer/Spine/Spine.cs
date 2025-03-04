@@ -82,9 +82,10 @@ namespace SpineViewer.Spine
             }
             catch (Exception ex)
             {
+                FragmentShader = null;
                 Program.Logger.Error(ex.ToString());
                 Program.Logger.Error("Failed to load fragment shader");
-                FragmentShader = null;
+                MessageBox.Show("Fragment shader 加载失败，预乘Alpha通道属性失效", "错误信息", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
