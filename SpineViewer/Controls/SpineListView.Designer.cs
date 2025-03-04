@@ -68,7 +68,7 @@
             // columnHeader_Name
             // 
             columnHeader_Name.Text = "名称";
-            columnHeader_Name.Width = 250;
+            columnHeader_Name.Width = 220;
             // 
             // contextMenuStrip
             // 
