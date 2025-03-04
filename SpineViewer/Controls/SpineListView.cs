@@ -54,7 +54,7 @@ namespace SpineViewer.Controls
 
                 // 锁定外部的读操作
                 lock (Spines) { spines.Insert(index, spine); }
-                listView.Items.Insert(index, new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath });
+                listView.Items.Insert(index, new ListViewItem(spine.Name) { ToolTipText = spine.SkelPath });
 
                 // 选中新增项
                 listView.SelectedIndices.Clear();
@@ -119,7 +119,7 @@ namespace SpineViewer.Controls
                 {
                     var spine = Spine.Spine.New(version, skelPath);
                     lock (Spines) { spines.Add(spine); }
-                    listView.Invoke(() => listView.Items.Add(new ListViewItem([spine.Name, spine.Version.String()], -1) { ToolTipText = spine.SkelPath }));
+                    listView.Invoke(() => listView.Items.Add(new ListViewItem(spine.Name) { ToolTipText = spine.SkelPath }));
                     success++;
                 }
                 catch (Exception ex)
