@@ -9,7 +9,7 @@ using SpineRuntime42;
 
 namespace SpineViewer.Spine.Implementations
 {
-    [SpineImplementation(Version.V40)]
+    [SpineImplementation(Version.V42)]
     internal class Spine42 : Spine
     {
         private class TextureLoader : SpineRuntime42.TextureLoader
