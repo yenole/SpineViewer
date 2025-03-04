@@ -44,8 +44,8 @@ namespace SpineViewer.Spine
         [Description("v3.7.94")] V37 = 0x0307,
         [Description("v3.8.99")] V38 = 0x0308,
         [Description("v4.0.64")] V40 = 0x0400,
-        [Description("v4.1.x")] V41 = 0x0401,
-        [Description("v4.2.x")] V42 = 0x0402,
-        [Description("v4.3.x")] V43 = 0x0403,
+        [Description("v4.1.54")] V41 = 0x0401,
+        [Description("v4.2.74")] V42 = 0x0402,
+        [Description("v4.3.xx")] V43 = 0x0403,
     }
 }
