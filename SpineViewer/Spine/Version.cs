@@ -41,7 +41,7 @@ namespace SpineViewer.Spine
     public enum Version
     {
         [Description("v3.6.53")] V36 = 0x0306,
-        [Description("v3.7.x")] V37 = 0x0307,
+        [Description("v3.7.94")] V37 = 0x0307,
         [Description("v3.8.99")] V38 = 0x0308,
         [Description("v4.0.x")] V40 = 0x0400,
         [Description("v4.1.x")] V41 = 0x0401,
