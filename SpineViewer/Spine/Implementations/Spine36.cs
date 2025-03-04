@@ -49,22 +49,29 @@ namespace SpineViewer.Spine.Implementations
         public Spine36(string skelPath, string? atlasPath = null) : base(skelPath, atlasPath)
         {
             atlas = new Atlas(AtlasPath, textureLoader);
-            if (Path.GetExtension(SkelPath) == ".skel")
+            try
             {
+                // 先尝试二进制文件
                 skeletonJson = null;
                 skeletonBinary = new SkeletonBinary(atlas);
                 skeletonData = skeletonBinary.ReadSkeletonData(SkelPath);
             }
-            else if (Path.GetExtension(SkelPath) == ".json")
+            catch
             {
-                skeletonBinary = null;
-                skeletonJson = new SkeletonJson(atlas);
-                skeletonData = skeletonJson.ReadSkeletonData(SkelPath);
+                try
+                {
+                    // 再尝试 Json 文件
+                    skeletonBinary = null;
+                    skeletonJson = new SkeletonJson(atlas);
+                    skeletonData = skeletonJson.ReadSkeletonData(SkelPath);
+                }
+                catch
+                {
+                    // 都不行就报错
+                    throw new ArgumentException($"Unknown skeleton file format {SkelPath}");
+                }
             }
-            else
-            {
-                throw new ArgumentException($"Unknown skeleton file format {SkelPath}");
-            }
+
             animationStateData = new AnimationStateData(skeletonData);
             skeleton = new Skeleton(skeletonData);
             animationState = new AnimationState(animationStateData);
