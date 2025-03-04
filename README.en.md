@@ -1,5 +1,7 @@
 # SpineViewer
 
+[![Build and Release](https://github.com/ww-rm/SpineViewer/actions/workflows/dotnet-desktop.yml/badge.svg)](https://github.com/ww-rm/SpineViewer/actions/workflows/dotnet-desktop.yml)
+
 [中文](README.md) | [English](README.en.md)
 
 A simple and user-friendly Spine file viewer and exporter.
