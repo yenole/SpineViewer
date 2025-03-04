@@ -163,24 +163,17 @@ namespace SpineViewer
             (new Dialogs.AboutDialog()).ShowDialog();
         }
 
-        private void splitContainer_SplitterMoved(object sender, SplitterEventArgs e)
+        private void toolStripMenuItem_Diagnostics_Click(object sender, EventArgs e)
         {
-            ActiveControl = null;
+            (new Dialogs.DiagnosticsDialog()).ShowDialog();
         }
 
-        private void splitContainer_MouseUp(object sender, MouseEventArgs e)
-        {
-            ActiveControl = null;
-        }
+        private void splitContainer_SplitterMoved(object sender, SplitterEventArgs e) { ActiveControl = null; }
 
-        private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
-        {
-            (sender as PropertyGrid)?.Refresh();
-        }
+        private void splitContainer_MouseUp(object sender, MouseEventArgs e) { ActiveControl = null; }
 
-        private void spinePreviewer_MouseUp(object sender, MouseEventArgs e)
-        {
-            propertyGrid_Spine.Refresh();
-        }
+        private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e) { (sender as PropertyGrid)?.Refresh(); }
+
+        private void spinePreviewer_MouseUp(object sender, MouseEventArgs e) { propertyGrid_Spine.Refresh(); }
     }
 }

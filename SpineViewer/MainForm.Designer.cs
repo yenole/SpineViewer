@@ -57,6 +57,8 @@
             spinePreviewer = new SpineViewer.Controls.SpinePreviewer();
             panel_MainForm = new Panel();
             toolTip = new ToolTip(components);
+            toolStripSeparator3 = new ToolStripSeparator();
+            toolStripMenuItem_Diagnostics = new ToolStripMenuItem();
             menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer_MainForm).BeginInit();
             splitContainer_MainForm.Panel1.SuspendLayout();
@@ -103,40 +105,40 @@
             // 
             toolStripMenuItem_Open.Name = "toolStripMenuItem_Open";
             toolStripMenuItem_Open.ShortcutKeys = Keys.Control | Keys.O;
-            toolStripMenuItem_Open.Size = new Size(254, 34);
+            toolStripMenuItem_Open.Size = new Size(270, 34);
             toolStripMenuItem_Open.Text = "打开(&O)...";
             toolStripMenuItem_Open.Click += toolStripMenuItem_Open_Click;
             // 
             // toolStripMenuItem_BatchOpen
             // 
             toolStripMenuItem_BatchOpen.Name = "toolStripMenuItem_BatchOpen";
-            toolStripMenuItem_BatchOpen.Size = new Size(254, 34);
+            toolStripMenuItem_BatchOpen.Size = new Size(270, 34);
             toolStripMenuItem_BatchOpen.Text = "批量打开(&B)...";
             toolStripMenuItem_BatchOpen.Click += toolStripMenuItem_BatchOpen_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(251, 6);
+            toolStripSeparator1.Size = new Size(267, 6);
             // 
             // toolStripMenuItem_Export
             // 
             toolStripMenuItem_Export.Name = "toolStripMenuItem_Export";
             toolStripMenuItem_Export.ShortcutKeys = Keys.Control | Keys.S;
-            toolStripMenuItem_Export.Size = new Size(254, 34);
+            toolStripMenuItem_Export.Size = new Size(270, 34);
             toolStripMenuItem_Export.Text = "导出(&E)...";
             toolStripMenuItem_Export.Click += toolStripMenuItem_Export_Click;
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(251, 6);
+            toolStripSeparator2.Size = new Size(267, 6);
             // 
             // toolStripMenuItem_Exit
             // 
             toolStripMenuItem_Exit.Name = "toolStripMenuItem_Exit";
             toolStripMenuItem_Exit.ShortcutKeys = Keys.Alt | Keys.F4;
-            toolStripMenuItem_Exit.Size = new Size(254, 34);
+            toolStripMenuItem_Exit.Size = new Size(270, 34);
             toolStripMenuItem_Exit.Text = "退出(&X)";
             toolStripMenuItem_Exit.Click += toolStripMenuItem_Exit_Click;
             // 
@@ -150,13 +152,13 @@
             // toolStripMenuItem_ResetAnimation
             // 
             toolStripMenuItem_ResetAnimation.Name = "toolStripMenuItem_ResetAnimation";
-            toolStripMenuItem_ResetAnimation.Size = new Size(242, 34);
+            toolStripMenuItem_ResetAnimation.Size = new Size(270, 34);
             toolStripMenuItem_ResetAnimation.Text = "重置动画时间(&R)";
             toolStripMenuItem_ResetAnimation.Click += toolStripMenuItem_ResetAnimation_Click;
             // 
             // toolStripMenuItem_Help
             // 
-            toolStripMenuItem_Help.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem_About });
+            toolStripMenuItem_Help.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem_Diagnostics, toolStripSeparator3, toolStripMenuItem_About });
             toolStripMenuItem_Help.Name = "toolStripMenuItem_Help";
             toolStripMenuItem_Help.Size = new Size(88, 28);
             toolStripMenuItem_Help.Text = "帮助(&H)";
@@ -378,6 +380,18 @@
             // 
             toolTip.ShowAlways = true;
             // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(267, 6);
+            // 
+            // toolStripMenuItem_Diagnostics
+            // 
+            toolStripMenuItem_Diagnostics.Name = "toolStripMenuItem_Diagnostics";
+            toolStripMenuItem_Diagnostics.Size = new Size(270, 34);
+            toolStripMenuItem_Diagnostics.Text = "诊断信息(&D)";
+            toolStripMenuItem_Diagnostics.Click += toolStripMenuItem_Diagnostics_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(11F, 24F);
@@ -449,5 +463,7 @@
         private Controls.SpinePreviewer spinePreviewer;
         private ToolStripMenuItem toolStripMenuItem_Function;
         private ToolStripMenuItem toolStripMenuItem_ResetAnimation;
+        private ToolStripMenuItem toolStripMenuItem_Diagnostics;
+        private ToolStripSeparator toolStripSeparator3;
     }
 }
