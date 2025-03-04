@@ -6,7 +6,7 @@
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <Version>3.8.95</Version>
+        <Version>3.8.99</Version>
         <BaseOutputPath>$(SolutionDir)out</BaseOutputPath>
     </PropertyGroup>
 

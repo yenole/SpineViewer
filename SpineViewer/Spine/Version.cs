@@ -40,12 +40,12 @@ namespace SpineViewer.Spine
     /// </summary>
     public enum Version
     {
-        [Description("v3.6.x")] V36 = 0x0306,
+        [Description("v3.6.53")] V36 = 0x0306,
         [Description("v3.7.x")] V37 = 0x0307,
-        [Description("v3.8.x")] V38 = 0x0308,
-        [Description("v3.9.x")] V39 = 0x0309,
+        [Description("v3.8.99")] V38 = 0x0308,
         [Description("v4.0.x")] V40 = 0x0400,
         [Description("v4.1.x")] V41 = 0x0401,
-        [Description("v4.2.x")] V42 = 0x0402
+        [Description("v4.2.x")] V42 = 0x0402,
+        [Description("v4.3.x")] V43 = 0x0403,
     }
 }
