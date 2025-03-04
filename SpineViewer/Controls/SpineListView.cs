@@ -67,7 +67,7 @@ namespace SpineViewer.Controls
                 MessageBox.Show(ex.ToString(), "骨骼加载失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            Program.Logger.Info($"Current memory usage: {Program.Process.WorkingSet64:N0} Bytes");
+            Program.Logger.Info($"Current memory usage: {Program.Process.WorkingSet64 / 1024.0 / 1024.0:F2} MB");
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace SpineViewer.Controls
                 Program.Logger.Info("{} skel loaded successfully", success);
             }
 
-            Program.Logger.Info($"Current memory usage: {Program.Process.WorkingSet64:N0} Bytes");
+            Program.Logger.Info($"Current memory usage: {Program.Process.WorkingSet64 / 1024.0 / 1024.0:F2} MB");
         }
 
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
