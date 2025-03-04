@@ -28,6 +28,7 @@
       <ProjectReference Include="..\SpineRuntimes\SpineRuntime36\SpineRuntime36.csproj" />
       <ProjectReference Include="..\SpineRuntimes\SpineRuntime37\SpineRuntime37.csproj" />
       <ProjectReference Include="..\SpineRuntimes\SpineRuntime38\SpineRuntime38.csproj" />
+      <ProjectReference Include="..\SpineRuntimes\SpineRuntime40\SpineRuntime40.csproj" />
     </ItemGroup>
 
     <ItemGroup>
