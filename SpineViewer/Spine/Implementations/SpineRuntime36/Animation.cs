@@ -146,7 +146,7 @@ namespace SpineRuntime36 {
 		Event, DrawOrder, //
 		IkConstraint, TransformConstraint, //
 		PathConstraintPosition, PathConstraintSpacing, PathConstraintMix, //
-		TwoColor
+		TwoColor,Ffd
 	}
 
 	/// <summary>Base class for frames that use an interpolation bezier curve.</summary>
@@ -1124,8 +1124,118 @@ namespace SpineRuntime36 {
 			}
 		}
 	}
+    public class FfdTimeline : CurveTimeline
+    {
+        internal int slotIndex;
+        internal float[] frames;
+        private float[][] frameVertices;
+        internal Attachment attachment;
 
-	public class TransformConstraintTimeline : CurveTimeline {
+        public int SlotIndex { get { return slotIndex; } set { slotIndex = value; } }
+        public float[] Frames { get { return frames; } set { frames = value; } } // time, ...
+        public float[][] Vertices { get { return frameVertices; } set { frameVertices = value; } }
+        public Attachment Attachment { get { return attachment; } set { attachment = value; } }
+
+        public override int PropertyId        {
+            get { return ((int)TimelineType.Ffd << 24) ; }
+        }
+        public FfdTimeline(int frameCount)
+            : base(frameCount)
+        {
+            frames = new float[frameCount];
+            frameVertices = new float[frameCount][];
+        }
+
+        /// <summary>Sets the time and value of the specified keyframe.</summary>
+        public void SetFrame(int frameIndex, float time, float[] vertices)
+        {
+			if(vertices ==null)
+			{
+				System.Console.WriteLine();
+			}
+            frames[frameIndex] = time;
+            frameVertices[frameIndex] = vertices;
+        }
+        public override void Apply(Skeleton skeleton, float lastTime, float time, ExposedList<Event> firedEvents, float alpha, MixPose pose, MixDirection direction)
+        {
+            Slot slot = skeleton.slots.Items[slotIndex];
+            MeshAttachment ffdAttachment = slot.attachment as MeshAttachment;
+			//if (ffdAttachment.Type != "shinnedmesh") return;
+            if (ffdAttachment == null || !ffdAttachment.ApplyDeform(ffdAttachment)) return;
+
+            float[] frames = this.frames;
+            if (time < frames[0]) return; // Time is before first frame.
+
+            float[][] frameVertices = this.frameVertices;
+            int vertexCount = frameVertices[0].Length;
+
+            ExposedList<float> vertices = slot.attachmentVertices;
+            if (vertices.Count != vertexCount) alpha = 1; // Don't mix from uninitialized slot vertices.
+
+			//var ensure = false;
+            // Ensure capacity
+            if (vertices.Count < vertexCount)
+            {
+				//ensure = true;
+                vertices = new ExposedList<float>(new float[vertexCount],vertexCount);
+                slot.attachmentVertices = vertices;
+            }
+			slot.attachmentVertices.Count = vertexCount;
+            //slot.attachmentVerticesCount = vertexCount;
+
+            if (time >= frames[frames.Length - 1])
+            { // Time is after last frame.
+                float[] lastVertices = frameVertices[frames.Length - 1];
+                if (alpha < 1)
+                {
+                    for (int i = 0; i < vertexCount; i++)
+                    {
+                        float vertex = vertices.Items[i];
+                        vertices.Items[i] = vertex + (lastVertices[i] - vertex) * alpha;
+                    }
+					//slot.attachmentVertices = new ExposedList<float>(vertices, vertices.Length);
+                }
+				else
+				{
+					Array.Copy(lastVertices, 0, vertices.Items, 0, vertexCount);
+				}
+                    //Array.Copy(lastVertices, 0, vertices, 0, vertexCount);
+                return;
+            }
+
+            // Interpolate between the previous frame and the current frame.
+            int frameIndex = Animation.BinarySearch(frames, time);
+            float frameTime = frames[frameIndex];
+            float percent = 1 - (time - frameTime) / (frames[frameIndex - 1] - frameTime);
+            percent = GetCurvePercent(frameIndex - 1, percent < 0 ? 0 : (percent > 1 ? 1 : percent));
+
+            float[] prevVertices = frameVertices[frameIndex - 1];
+            float[] nextVertices = frameVertices[frameIndex];
+
+            if (alpha < 1)
+            {
+                for (int i = 0; i < vertexCount; i++)
+                {
+                    float prev = prevVertices[i];
+                    float vertex = vertices.Items[i];
+                    vertices.Items[i] = vertex + (prev + (nextVertices[i] - prev) * percent - vertex) * alpha;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < vertexCount; i++)
+                {
+                    float prev = prevVertices[i];
+                    vertices.Items[i] = prev + (nextVertices[i] - prev) * percent;
+                }
+            }
+			//slot.attachmentVertices = new ExposedList<float>(vertices, vertices.Length);
+        }
+
+       
+    }
+
+    public class TransformConstraintTimeline : CurveTimeline {
 		public const int ENTRIES = 5;
 		private const int PREV_TIME = -5, PREV_ROTATE = -4, PREV_TRANSLATE = -3, PREV_SCALE = -2, PREV_SHEAR = -1;
 		private const int ROTATE = 1, TRANSLATE = 2, SCALE = 3, SHEAR = 4;

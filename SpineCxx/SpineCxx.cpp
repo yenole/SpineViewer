@@ -85,7 +85,7 @@ int main()
         return 1;
     }
 
-	size_t atlasSize,skeSize,tex1Size,tex2Size,tex3Size,tex4Size,tex5Size,tex6Size,tex7Size;
+	size_t atlasSize,skeSize,tex1Size,tex2Size,tex3Size,tex4Size,tex5Size,tex6Size,tex7Size,tex8Size,tex9Size;
     unsigned char* atlasBuffer = readFileToUnsignedCharArray("D:\\developer\\system\\Downloads\\Spine\\skeleton.atlas",atlasSize);
 	unsigned char* skeBuffer = readFileToUnsignedCharArray("D:\\developer\\system\\Downloads\\Spine\\skeleton.json", skeSize);
     unsigned char* tex1Buffer = readFileToUnsignedCharArray("D:\\developer\\system\\Downloads\\Spine\\skeleton.png", tex1Size);
@@ -95,6 +95,8 @@ int main()
     unsigned char* tex5Buffer = readFileToUnsignedCharArray("D:\\developer\\system\\Downloads\\Spine\\skeleton5.png", tex5Size);
     unsigned char* tex6Buffer = readFileToUnsignedCharArray("D:\\developer\\system\\Downloads\\Spine\\skeleton6.png", tex6Size);
     unsigned char* tex7Buffer = readFileToUnsignedCharArray("D:\\developer\\system\\Downloads\\Spine\\skeleton7.png", tex7Size);
+    //unsigned char* tex8Buffer = readFileToUnsignedCharArray("D:\\developer\\system\\Downloads\\Spine\\skeleton8.png", tex8Size);
+    //unsigned char* tex9Buffer = readFileToUnsignedCharArray("D:\\developer\\system\\Downloads\\Spine\\skeleton9.png", tex9Size);
 	unsigned char* buffer = new unsigned char[atlasSize + skeSize +tex1Size + tex2Size + tex3Size + tex4Size + tex5Size+tex6Size+tex7Size];
 	
     size_t offset = 0;
@@ -107,6 +109,8 @@ int main()
     memcpy(buffer + offset, tex5Buffer, tex5Size);offset += tex5Size;
     memcpy(buffer + offset, tex6Buffer, tex6Size);offset += tex6Size;
     memcpy(buffer + offset, tex7Buffer, tex7Size);offset += tex7Size;
+    //memcpy(buffer + offset, tex8Buffer, tex8Size);offset += tex8Size;
+    //memcpy(buffer + offset, tex9Buffer, tex9Size);offset += tex9Size;
     //offset += tex5Size;
     int out_size;
     unsigned char* result =  spine2Frames(1024*2,1024*2,30,9,buffer,&out_size);
@@ -117,7 +121,7 @@ int main()
        auto size = littleEndianBytesToInt(result);
        std::cout << "file_size:" << size << std::endl;
        result += 4;
-       std::string filename = "D:\\frame_";
+       std::string filename = "D:\\222\\frame_";
        filename.append(std::to_string(i));
        filename.append(".png");
        writeFileUnsignedCharArr(filename, result, size);

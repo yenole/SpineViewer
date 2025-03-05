@@ -40,6 +40,7 @@ namespace SpineRuntime36 {
 		internal float r = 1, g = 1, b = 1, a = 1;
 		internal int hulllength;
 		internal bool inheritDeform;
+		internal string type;
 
 		public int HullLength { get { return hulllength; } set { hulllength = value; } }
 		public float[] RegionUVs { get { return regionUVs; } set { regionUVs = value; } }
@@ -67,7 +68,7 @@ namespace SpineRuntime36 {
 		public float RegionOriginalHeight { get { return regionOriginalHeight; } set { regionOriginalHeight = value; } } // Unrotated, unstripped size.
 
 		public bool InheritDeform { get { return inheritDeform; } set { inheritDeform = value; } }
-
+		public string Type { get { return type; } set { type = value; }  }
 		public MeshAttachment ParentMesh {
 			get { return parentMesh; }
 			set {

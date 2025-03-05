@@ -71,6 +71,7 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ExecutablePath>E:\SpineViewer\out\x86\Debug\net8.0-windows;$(ExecutablePath)</ExecutablePath>
+    <OutDir>$(SolutionDir)out\x86\$(Configuration)\net472</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)out\x86\$(Configuration)\net472</OutDir>

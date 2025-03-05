@@ -35,6 +35,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 #if WINDOWS_STOREAPP
 using System.Threading.Tasks;
@@ -123,14 +124,9 @@ namespace SpineRuntime36 {
 				data.scaleY = GetFloat(boneMap, "scaleY", 1);
 				data.shearX = GetFloat(boneMap, "shearX", 0);
 				data.shearY = GetFloat(boneMap, "shearY", 0);
-				if(GetBoolean(boneMap, "flipX", false))
-				{
-					data.scaleX *= -1;
-				}
-				if (GetBoolean(boneMap, "flipY", false))
-				{
-					data.scaleY *= -1;
-				}
+				if (GetBoolean(boneMap, "flipX", false)) { data.scaleX *= -1; }
+				if (GetBoolean(boneMap, "flipY", false)) { data.scaleY *= -1; }
+
 				string tm = GetString(boneMap, "transform", TransformMode.Normal.ToString());
 				data.transformMode = (TransformMode)Enum.Parse(typeof(TransformMode), tm, true);
 
@@ -369,8 +365,9 @@ namespace SpineRuntime36 {
 					MeshAttachment mesh = attachmentLoader.NewMeshAttachment(skin, name, path);
 					if (mesh == null) return null;
 					mesh.Path = path;
+					mesh.Type = GetString(map, "type", "region");
 
-					if (map.ContainsKey("color")) {
+                     if (map.ContainsKey("color")) {
 						var color = (string)map["color"];
 						mesh.r = ToColor(color, 0);
 						mesh.g = ToColor(color, 1);
@@ -610,9 +607,76 @@ namespace SpineRuntime36 {
 					duration = Math.Max(duration, timeline.frames[(timeline.FrameCount - 1) * IkConstraintTimeline.ENTRIES]);
 				}
 			}
+            // ffd timelines.
+            if (map.ContainsKey("ffd"))
+            {
+                foreach (KeyValuePair<String, Object> ffdMap in (Dictionary<String, Object>)map["ffd"])
+                {
+                    Skin skin = skeletonData.FindSkin(ffdMap.Key);
+                    foreach (KeyValuePair<String, Object> slotMap in (Dictionary<String, Object>)ffdMap.Value)
+                    {
+                        int slotIndex = skeletonData.FindSlotIndex(slotMap.Key);
+                        foreach (KeyValuePair<String, Object> meshMap in (Dictionary<String, Object>)slotMap.Value)
+                        {
+                            var values = (List<Object>)meshMap.Value;
+                            var timeline = new FfdTimeline(values.Count);
+                            Attachment attachment = skin.GetAttachment(slotIndex, meshMap.Key);
+                            if (attachment == null) throw new Exception("FFD attachment not found: " + meshMap.Key);
+                            timeline.slotIndex = slotIndex;
+                            timeline.attachment = attachment;
 
-			// Transform constraint timelines.
-			if (map.ContainsKey("transform")) {
+                            int vertexCount;
+                            if (attachment is MeshAttachment &&(attachment as MeshAttachment).Type != "skinnedmesh")
+                                vertexCount = ((MeshAttachment)attachment).vertices.Length;
+                            else
+                                vertexCount = ((MeshAttachment)attachment).vertices.Length / 3 * 2;
+
+                            int frameIndex = 0;
+                            foreach (Dictionary<String, Object> valueMap in values)
+                            {
+                                float[] vertices;
+                                if (!valueMap.ContainsKey("vertices"))
+                                {
+                                    if (attachment is MeshAttachment && (attachment as MeshAttachment).Type != "skinnedmesh")
+                                        vertices = ((MeshAttachment)attachment).vertices;
+                                    else
+                                        vertices = new float[vertexCount];
+								}
+                                else
+                                {
+                                    var verticesValue = (List<Object>)valueMap["vertices"];
+                                    vertices = new float[vertexCount];
+                                    int start = GetInt(valueMap, "offset", 0);
+                                    if (scale == 1)
+                                    {
+                                        for (int i = 0, n = verticesValue.Count; i < n; i++)
+                                            vertices[i + start] = (float)verticesValue[i];
+                                    }
+                                    else
+                                    {
+                                        for (int i = 0, n = verticesValue.Count; i < n; i++)
+                                            vertices[i + start] = (float)verticesValue[i] * scale;
+                                    }
+                                    if (attachment is MeshAttachment && (attachment as MeshAttachment).Type != "skinnedmesh")
+                                    {
+                                        float[] meshVertices = ((MeshAttachment)attachment).vertices;
+                                        for (int i = 0; i < vertexCount; i++)
+                                            vertices[i] += meshVertices[i];
+                                    }
+                                }
+                                timeline.SetFrame(frameIndex, (float)valueMap["time"], vertices);
+                                ReadCurve(valueMap,timeline, frameIndex);
+                                frameIndex++;
+                            }
+                            timelines.Add(timeline);
+                            duration = Math.Max(duration, timeline.frames[timeline.FrameCount - 1]);
+                        }
+                    }
+                }
+            }
+
+            // Transform constraint timelines.
+            if (map.ContainsKey("transform")) {
 				foreach (KeyValuePair<string, Object> constraintMap in (Dictionary<string, Object>)map["transform"]) {
 					TransformConstraintData constraint = skeletonData.FindTransformConstraint(constraintMap.Key);
 					var values = (List<Object>)constraintMap.Value;
