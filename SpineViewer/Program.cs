@@ -39,10 +39,10 @@ namespace SpineViewer
             var buffers2 = new MemoryStream();
             var outSizeBytes = int2bytes(frames.Count);
             Marshal.Copy(outSizeBytes, 0, out_size, 4);
-            for (int i = frames.Count - 1; i >= 0; i--)
-            { 
+            for (int i = 0; i < frames.Count;i++)
+            {
                 var frame = frames[i];
-                buffers2.Write(int2bytes(frames[i].Length),0,4);
+                buffers2.Write(int2bytes(frames[i].Length), 0, 4);
                 buffers2.Write(frame, 0, frame.Length);
             }
             var rstBytes = buffers2.ToArray();
@@ -109,7 +109,7 @@ namespace SpineViewer
                     {
                         // SaveMemeory报错
                         var file = Path.GetTempPath()+ "\\" + timestamp + "_" + frameIndex + ".png";
-                        if (img.SaveToFile(file))
+                         if (img.SaveToFile(file))
                         {
                             list.Add(File.ReadAllBytes(file));
                             File.Delete(file);
