@@ -123,6 +123,8 @@ namespace SpineRuntime36 {
 				data.scaleY = GetFloat(boneMap, "scaleY", 1);
 				data.shearX = GetFloat(boneMap, "shearX", 0);
 				data.shearY = GetFloat(boneMap, "shearY", 0);
+				if (GetBoolean(boneMap, "flipX", false)) { data.scaleX *= -1; }
+				if (GetBoolean(boneMap, "flipY", false)) { data.scaleY *= -1; }
 
 				string tm = GetString(boneMap, "transform", TransformMode.Normal.ToString());
 				data.transformMode = (TransformMode)Enum.Parse(typeof(TransformMode), tm, true);
