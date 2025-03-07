@@ -35,6 +35,10 @@
     <DllExportDir>$(MSBuildProjectDirectory)\..\</DllExportDir>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Costura.Fody" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="DllExport">
       <Version>1.8.0</Version>
       <Visible>false</Visible>
