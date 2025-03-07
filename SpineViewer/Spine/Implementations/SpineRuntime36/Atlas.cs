@@ -35,7 +35,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 
 #if WINDOWS_STOREAPP
 using System.Threading.Tasks;
@@ -107,6 +106,67 @@ namespace SpineRuntime36 {
 			this.regions = regions;
 			this.textureLoader = null;
 		}
+
+		static bool isBlack(SFML.Graphics.Color color) { 
+			return color.R <=5 && color.G <=5 && color.B <=5 && color.A>=240;
+		}
+        static byte Max(params byte[] values)
+        {
+            if (values == null || values.Length == 0)
+                return 0;
+            var max = values[0];
+            for (var i = 1; i < values.Length; ++i)
+            {
+                max = Math.Max(max, values[i]);
+            }
+            return max;
+        }
+
+
+		public void MakeTransparent()
+		{
+            foreach (var page in pages)
+            {
+				var texture = page.rendererObject as SFML.Graphics.Texture;
+				if (texture == null) continue;
+				var image = texture.CopyToImage();
+				var is_patch = false;
+                foreach (var regions in regions)
+                {
+					if (regions.page != page) continue;
+					var a = image.GetPixel((uint)regions.x, (uint)regions.y);
+                    var b = image.GetPixel((uint)regions.x + (uint)regions.width-1, (uint)regions.y);
+                    var c = image.GetPixel((uint)regions.x, (uint)regions.y+(uint)regions.height-1);
+                    var d = image.GetPixel((uint)regions.x+(uint)regions.height-1, (uint)regions.y + (uint)regions.height - 1);
+					if (isBlack(a) && isBlack(b) && isBlack(c) && isBlack(d)){
+                        for (uint y = (uint)regions.y; y < (uint)(regions.y+regions.height); ++y)
+                        {
+                            for (uint x = (uint)regions.x; x < (uint)(regions.x+regions.width); ++x)
+                            {
+                                var color = image.GetPixel(x, y);
+                                var max = Max(color.R, color.G, color.B);
+                                byte sub = (byte)(254 - max);
+                                var alpha = Math.Min(color.A, max);
+                                color.R = (byte)(color.R + sub);
+                                color.G = (byte)(color.G + sub);
+                                color.B = (byte)(color.B + sub);
+                                color.A = alpha;
+                                image.SetPixel(x, y, color);
+                            }
+                        }
+                        is_patch = true;
+					}
+                }
+				if (is_patch){
+					texture = new SFML.Graphics.Texture(image);
+                    if (page.magFilter == TextureFilter.Linear)
+                        texture.Smooth = true;
+                    if (page.uWrap == TextureWrap.Repeat && page.vWrap == TextureWrap.Repeat)
+                        texture.Repeated = true;
+					page.rendererObject = texture;
+                }
+            }
+        }
 
 		private void Load (TextReader reader, string imagesDir, TextureLoader textureLoader) {
 			if (textureLoader == null) throw new ArgumentNullException("textureLoader", "textureLoader cannot be null.");

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using SFML.Graphics;
 using SpineRuntime36;
 
 namespace SpineViewer.Spine.Implementations
@@ -18,6 +16,7 @@ namespace SpineViewer.Spine.Implementations
 
         public void Load(AtlasPage page, string path)
         {
+
             var texture = new SFML.Graphics.Texture(dataList.Dequeue());
             if (page.magFilter == TextureFilter.Linear)
                 texture.Smooth = true;
@@ -99,6 +98,7 @@ namespace SpineViewer.Spine.Implementations
         public Spine36(TextReader skelReader, TextReader atlasReader,SpineRuntime36.TextureLoader textureLoader)
         {
             atlas = new Atlas(atlasReader,"",textureLoader);
+            atlas.MakeTransparent();
             skeletonBinary = null;
             skeletonJson = new SkeletonJson(atlas);
             skeletonData = skeletonJson.ReadSkeletonData(skelReader);
