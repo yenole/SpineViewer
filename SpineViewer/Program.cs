@@ -1,16 +1,113 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using SFML.Graphics;
+using SpineRuntime36;
+using SpineViewer.Spine;
 using SpineViewer.Spine.Implementations;
 
 
 namespace SpineViewer
 {
+   
 
     public class Spine2Freme
     {
+      
+        static Spine.Spine globalSpine = null;
+        static IntPtr globalBuffer = IntPtr.Zero;
+
+        [DllExport]
+        public static int LoadSpine(float fps,int size ,IntPtr buffer)
+        {
+            var offset = 0;
+            var list = new Queue<byte[]>();
+            for (int i = 0; i < size; i++)
+            {
+                var bytes = new byte[4];
+                Marshal.Copy(buffer + offset, bytes, 0, 4);
+                offset += 4;
+                var fileSize = bytes2int(bytes);
+                bytes = new byte[fileSize];
+                Marshal.Copy(buffer + offset, bytes, 0, fileSize);
+                list.Enqueue(bytes);
+                offset += fileSize;
+            }
+            var atlas = list.Dequeue();
+            var skel = list.Dequeue();
+            var textures = new List<byte[]>();
+            size = list.Count;
+            for (int i = 0; i < size; i++)
+            {
+                textures.Add(list.Dequeue());
+            }
+            TextReader skeReader = new StreamReader(new MemoryStream(skel));
+            TextReader atlasReader = new StreamReader(new MemoryStream(atlas));
+            ByteTextureLoader loader = new ByteTextureLoader();
+            textures.ForEach(t => loader.push(t));
+
+            var spine = Spine.Spine.New(skeReader, atlasReader, loader);
+            globalSpine = spine;
+            spine.FlipY = true;
+            spine.CurrentAnimation = "animation";
+            var delta = 1f / fps;
+            return 1 + (int)(spine.GetAnimationDuration("animation") / delta); 
+        }
+
+        [DllExport]
+        public static IntPtr ExportFrame(int width,int height,float fps,int index,IntPtr size)
+        {
+            globalSpine.Position = new System.Drawing.PointF(0, height / 4);
+            globalSpine.CurrentAnimation = "animation";
+
+            using (var tex = new RenderTexture((uint)width, (uint)height))
+            {
+                View view = new View();
+                view.Size = new SFML.System.Vector2f(width, height);
+                view.Center = new SFML.System.Vector2f(width / 2, height / 2);
+                tex.SetView(view);
+
+                var delta = 1f / fps;
+                var frameCount = 1 + (int)(globalSpine.GetAnimationDuration("animation") / delta);
+                var timestamp = System.DateTime.Now.ToString("yyMMddHHmmss");
+
+                lock (globalSpine)
+                {
+                    for (int i = 0; i < index; i++) globalSpine.Update(delta);
+
+                    tex.Clear(SFML.Graphics.Color.Transparent);
+                    tex.Draw(globalSpine);
+                    globalSpine.Update(delta);
+
+                    tex.Display();
+                    using (var img = tex.Texture.CopyToImage())
+                    {
+                        // SaveMemeory报错
+                        var file = Path.GetTempPath() + "\\" + timestamp + ".png";
+                        if (img.SaveToFile(file))
+                        {
+                              var bytes = File.ReadAllBytes(file);
+                              File.Delete(file);
+                              if (globalBuffer != IntPtr.Zero)
+                              {
+                                  Marshal.FreeHGlobal(globalBuffer);
+                              }
+                              globalBuffer = Marshal.AllocHGlobal(bytes.Length);
+                              Marshal.Copy(bytes, 0, globalBuffer, bytes.Length);
+                              var outSizeBytes = int2bytes(bytes.Length);
+                              Marshal.Copy(outSizeBytes, 0, size, 4);
+                            return globalBuffer;
+                        }
+                        return IntPtr.Zero;
+                    }
+                }
+            }
+
+              
+        }
+
         [DllExport]
         public static IntPtr SpineToFrames(int width,int height,float fps,int size,IntPtr buffer,IntPtr out_size)
         {

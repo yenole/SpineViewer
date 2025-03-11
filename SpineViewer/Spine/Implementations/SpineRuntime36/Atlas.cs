@@ -108,7 +108,7 @@ namespace SpineRuntime36 {
 		}
 
 		static bool isBlack(SFML.Graphics.Color color) { 
-			return color.R <=5 && color.G <=5 && color.B <=5 && color.A>=240;
+			return color.R <=10 && color.G <=10 && color.B <=10 && color.A>=240;
 		}
         static byte Max(params byte[] values)
         {
